@@ -37,45 +37,32 @@ export const AddCategoryForm: React.FC<AddCategoryFormProps> = ({ initialData, o
   const [error, setError] = useState<string | null>(null);
 
   if (!categoryRepo) {
-    console.log('[AddCategoryForm] Repository not ready, showing loading...');
     return <div className="text-gray-500">Loading...</div>;
   }
 
-  console.log('[AddCategoryForm] Form ready, repository loaded');
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[AddCategoryForm] Submit started', { formData, isEditing, initialData });
     setError(null);
     setIsSubmitting(true);
 
     try {
       if (!formData.name.trim()) {
-        console.log('[AddCategoryForm] Validation failed: empty name');
         throw new Error('Category name is required');
       }
       if (!formData.icon.trim()) {
-        console.log('[AddCategoryForm] Validation failed: empty icon');
         throw new Error('Category icon is required');
       }
 
       if (isEditing && initialData) {
-        console.log('[AddCategoryForm] Updating category in database...', formData);
         await categoryRepo.update(initialData.id, formData);
         const updatedCategory = { ...initialData, ...formData };
-        console.log('[AddCategoryForm] Category updated in DB:', updatedCategory);
         dispatch({ type: 'UPDATE_CATEGORY', payload: updatedCategory });
-        console.log('[AddCategoryForm] State updated successfully');
       } else {
-        console.log('[AddCategoryForm] Creating category in database...', formData);
         const newCategory = await categoryRepo.create(formData);
-        console.log('[AddCategoryForm] Category created in DB:', newCategory);
         dispatch({ type: 'ADD_CATEGORY', payload: newCategory });
-        console.log('[AddCategoryForm] State updated successfully');
       }
 
       if (onSuccess) {
-        console.log('[AddCategoryForm] Calling onSuccess callback');
         onSuccess();
       }
 
@@ -88,19 +75,16 @@ export const AddCategoryForm: React.FC<AddCategoryFormProps> = ({ initialData, o
           isDefault: false,
           isActive: true,
         });
-        console.log('[AddCategoryForm] Form reset complete');
       }
     } catch (err) {
       console.error('[AddCategoryForm] Error:', err);
       setError(err instanceof Error ? err.message : 'Failed to add category');
     } finally {
       setIsSubmitting(false);
-      console.log('[AddCategoryForm] Submit finished, isSubmitting set to false');
     }
   };
 
   const handleChange = (field: string, value: unknown) => {
-    console.log(`[AddCategoryForm] Field changed: ${field} =`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

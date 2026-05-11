@@ -35,45 +35,32 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ initialData, onS
   const [error, setError] = useState<string | null>(null);
 
   if (!accountRepo) {
-    console.log('[AddAccountForm] Repository not ready, showing loading...');
     return <div className="text-gray-500">Loading...</div>;
   }
 
-  console.log('[AddAccountForm] Form ready, repository loaded');
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[AddAccountForm] Submit started', { formData, isEditing, initialData });
     setError(null);
     setIsSubmitting(true);
 
     try {
       if (!formData.name.trim()) {
-        console.log('[AddAccountForm] Validation failed: empty name');
         throw new Error('Account name is required');
       }
       if (!formData.icon.trim()) {
-        console.log('[AddAccountForm] Validation failed: empty icon');
         throw new Error('Account icon is required');
       }
 
       if (isEditing && initialData) {
-        console.log('[AddAccountForm] Updating account in database...', formData);
         await accountRepo.update(initialData.id, formData);
         const updatedAccount = { ...initialData, ...formData };
-        console.log('[AddAccountForm] Account updated in DB:', updatedAccount);
         dispatch({ type: 'UPDATE_ACCOUNT', payload: updatedAccount });
-        console.log('[AddAccountForm] State updated successfully');
       } else {
-        console.log('[AddAccountForm] Creating account in database...', formData);
         const newAccount = await accountRepo.create(formData);
-        console.log('[AddAccountForm] Account created in DB:', newAccount);
         dispatch({ type: 'ADD_ACCOUNT', payload: newAccount });
-        console.log('[AddAccountForm] State updated successfully');
       }
 
       if (onSuccess) {
-        console.log('[AddAccountForm] Calling onSuccess callback');
         onSuccess();
       }
 
@@ -85,19 +72,16 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ initialData, onS
           icon: '',
           isActive: true,
         });
-        console.log('[AddAccountForm] Form reset complete');
       }
     } catch (err) {
       console.error('[AddAccountForm] Error:', err);
       setError(err instanceof Error ? err.message : 'Failed to add account');
     } finally {
       setIsSubmitting(false);
-      console.log('[AddAccountForm] Submit finished, isSubmitting set to false');
     }
   };
 
   const handleChange = (field: string, value: unknown) => {
-    console.log(`[AddAccountForm] Field changed: ${field} =`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

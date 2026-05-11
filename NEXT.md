@@ -295,3 +295,8 @@
 - [x] 数据统计展示（交易/账户/分类/预算/目标数量）
 - [x] 危险操作区（清除所有数据）
 - [x] SettingsService（设置存储和加载）
+
+## 代码清理
+- [x] 移除 AddBudgetForm 中的 debug console.log（22个减少到1个）
+- [x] 移除 AddAccountForm 中的 debug console.log（11个减少到1个）
+- [x] 移除 AddCategoryForm 中的 debug console.log（11个减少到1个）

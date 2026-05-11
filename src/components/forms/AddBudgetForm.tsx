@@ -45,24 +45,17 @@ export const AddBudgetForm: React.FC<AddBudgetFormProps> = ({ initialData, onSuc
   const [error, setError] = useState<string | null>(null);
 
   if (!categoryRepo || !budgetRepo) {
-    console.log('[AddBudgetForm] Repository not ready, showing loading...');
     return <div className="text-gray-500">Loading...</div>;
   }
 
-  console.log('[AddBudgetForm] Form ready, repositories loaded');
-
   useEffect(() => {
     const loadCategories = async () => {
-      console.log('[AddBudgetForm] Loading categories...');
       const cats = await categoryRepo.findAll();
-      console.log('[AddBudgetForm] Categories loaded:', cats.length);
       setCategories(cats);
       if (cats.length > 0 && formData.categoryId === 0) {
         setFormData(prev => ({ ...prev, categoryId: cats[0].id }));
-        console.log('[AddBudgetForm] Set default category:', cats[0].name);
       }
     };
-    console.log('[AddBudgetForm] Effect: loading initial data');
     loadCategories();
   }, []);
 
@@ -119,41 +112,30 @@ export const AddBudgetForm: React.FC<AddBudgetFormProps> = ({ initialData, onSuc
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('[AddBudgetForm] Submit started', { formData, isEditing, initialData });
     setError(null);
     setIsSubmitting(true);
 
     try {
       if (!formData.name.trim()) {
-        console.log('[AddBudgetForm] Validation failed: empty name');
         throw new Error('Budget name is required');
       }
       if (formData.categoryId === 0) {
-        console.log('[AddBudgetForm] Validation failed: no category');
         throw new Error('Please select a category');
       }
       if (formData.amount <= 0) {
-        console.log('[AddBudgetForm] Validation failed: invalid amount', formData.amount);
         throw new Error('Amount must be greater than 0');
       }
 
       if (isEditing && initialData) {
-        console.log('[AddBudgetForm] Updating budget in database...', formData);
         await budgetRepo.update(initialData.id, formData);
         const updatedBudget = { ...initialData, ...formData };
-        console.log('[AddBudgetForm] Budget updated in DB:', updatedBudget);
         dispatch({ type: 'UPDATE_BUDGET', payload: updatedBudget });
-        console.log('[AddBudgetForm] State updated successfully');
       } else {
-        console.log('[AddBudgetForm] Creating budget in database...', formData);
         const newBudget = await budgetRepo.create(formData);
-        console.log('[AddBudgetForm] Budget created in DB:', newBudget);
         dispatch({ type: 'ADD_BUDGET', payload: newBudget });
-        console.log('[AddBudgetForm] State updated successfully');
       }
 
       if (onSuccess) {
-        console.log('[AddBudgetForm] Calling onSuccess callback');
         onSuccess();
       }
 
@@ -169,19 +151,16 @@ export const AddBudgetForm: React.FC<AddBudgetFormProps> = ({ initialData, onSuc
           isRegular: true,
           isBudgetExceeded: false,
         });
-        console.log('[AddBudgetForm] Form reset complete');
       }
     } catch (err) {
       console.error('[AddBudgetForm] Error:', err);
       setError(err instanceof Error ? err.message : 'Failed to add budget');
     } finally {
       setIsSubmitting(false);
-      console.log('[AddBudgetForm] Submit finished, isSubmitting set to false');
     }
   };
 
   const handleChange = (field: string, value: unknown) => {
-    console.log(`[AddBudgetForm] Field changed: ${field} =`, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
