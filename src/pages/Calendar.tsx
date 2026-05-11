@@ -123,7 +123,7 @@ export default function CalendarView() {
         setCurrentDate(new Date());
     };
 
-    const selectedDayTransactionsMemo = useMemo(() => {
+    const selectedDayTransactions = useMemo(() => {
         if (!selectedDate) return [];
         return transactions.filter(t => t.date === selectedDate);
     }, [selectedDate, transactions]);
@@ -140,11 +140,6 @@ export default function CalendarView() {
             }
         }
     };
-
-    const selectedDayTransactionsMemoMemo = useMemo(() => {
-        if (!selectedDate) return [];
-        return transactions.filter(t => t.date === selectedDate);
-    }, [selectedDate, transactions]);
 
     const selectedDayColumns: Column<Transaction>[] = [
         {
@@ -406,7 +401,7 @@ export default function CalendarView() {
                         </button>
                     </div>
 
-                    {selectedDayTransactionsMemo.length === 0 ? (
+                    {selectedDayTransactions.length === 0 ? (
                         <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                             <span className="text-4xl mb-2 block">📭</span>
                             <p>No transactions on this day</p>
@@ -418,21 +413,21 @@ export default function CalendarView() {
                                     <div>
                                         <span className="text-gray-500 dark:text-gray-400">Total Income: </span>
                                         <span className="text-green-600 dark:text-green-400 font-semibold">
-                                            +¥{selectedDayTransactionsMemo.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
+                                            +¥{selectedDayTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
                                         </span>
                                     </div>
                                     <div>
                                         <span className="text-gray-500 dark:text-gray-400">Total Expense: </span>
                                         <span className="text-red-600 dark:text-red-400 font-semibold">
-                                            -¥{selectedDayTransactionsMemo.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
+                                            -¥{selectedDayTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                             <DataTable
-                                data={selectedDayTransactionsMemo}
+                                data={selectedDayTransactions}
                                 columns={selectedDayColumns}
-                                title={`${selectedDayTransactionsMemo.length} Transactions`}
+                                title={`${selectedDayTransactions.length} Transactions`}
                                 emptyMessage="No transactions"
                                 onRowDelete={(item) => handleDeleteTransaction((item as Transaction).id)}
                                 searchable
