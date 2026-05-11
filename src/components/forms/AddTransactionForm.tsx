@@ -7,6 +7,7 @@ import type { Account } from '../../services/database/schemas/Account';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
+import { StickerPicker, type Sticker } from '../stickers/StickerPicker';
 
 interface AddTransactionFormProps {
     initialData?: Transaction;
@@ -36,6 +37,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
             type: initialData.type,
             mood: initialData.mood || '',
             tags: initialData.tags || '',
+            sticker: initialData.sticker || '',
         } : {
             amount: 0,
             categoryId: 0,
@@ -46,10 +48,12 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
             type: 'expense',
             mood: '',
             tags: '',
+            sticker: '',
         }
     );
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showStickerPicker, setShowStickerPicker] = useState(false);
 
     if (!categoryRepo || !budgetRepo || !accountRepo || !transactionRepo) {
         console.log('[AddTransactionForm] One or more repositories not ready, showing loading...');
@@ -108,6 +112,10 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
         }
     }, [formData.categoryId, categories]);
 
+    const handleStickerSelect = (sticker: Sticker) => {
+        handleChange('sticker', sticker.emoji);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('[AddTransactionForm] Submit started', { formData, isEditing, initialData });
@@ -163,6 +171,7 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
                     type: 'expense',
                     mood: '',
                     tags: '',
+                    sticker: '',
                 });
                 console.log('[AddTransactionForm] Form reset complete');
             }
@@ -266,6 +275,21 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
                 placeholder="e.g., work, daily, important (comma separated)"
             />
 
+            <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Sticker</label>
+                <button
+                    type="button"
+                    onClick={() => setShowStickerPicker(true)}
+                    className="w-full h-12 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-purple-400 dark:hover:border-purple-500 flex items-center justify-center gap-2 transition-colors"
+                >
+                    {formData.sticker ? (
+                        <span className="text-2xl">{formData.sticker}</span>
+                    ) : (
+                        <span className="text-gray-400">Click to add sticker</span>
+                    )}
+                </button>
+            </div>
+
             <Input
                 label="Description"
                 value={formData.description || ''}
@@ -280,6 +304,14 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
                 onChange={e => handleChange('date', e.target.value)}
                 required
             />
+
+            {showStickerPicker && (
+                <StickerPicker
+                    onSelect={handleStickerSelect}
+                    onClose={() => setShowStickerPicker(false)}
+                    selectedSticker={formData.sticker || undefined}
+                />
+            )}
 
             <div className="flex gap-3 pt-2">
                 <Button type="submit" isLoading={isSubmitting}>Add</Button>

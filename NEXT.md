@@ -180,9 +180,17 @@
   - Halloween (Oct) - 橙紫渐变
   - Christmas (Dec) - 绿红渐变
 - [ ] 表情包/贴纸系统
+  - [x] Sticker schema 扩展（sticker 字段）
+  - [x] StickerPicker 组件（15个分类，70+贴纸）
+  - [x] AddTransactionForm 集成贴纸选择
+  - [x] Transactions 页面显示贴纸列
 - [x] 备注心情/标签功能（Transaction 增加 mood 和 tags 字段）
 - [x] 分享功能（生成精美图片）
   - ShareService - Canvas 生成精美报告图片
   - ShareCard - 主题切换（暗色/亮色）、预览、下载、复制到剪贴板
   - Reports 页面集成分享按钮
 - [ ] 自定义光标图案解锁
+  - [x] CustomCursor 解锁系统（6种光标样式）
+  - [x] 解锁条件：成就数/交易数/连续签到天数
+  - [x] 样式：default, purple, gold, rainbow, star, heart
+  - [x] 悬浮按钮切换光标样式

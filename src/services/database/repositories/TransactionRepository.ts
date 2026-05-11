@@ -58,7 +58,8 @@ export class TransactionRepository implements BaseRepository<Transaction> {
         data.date,
         data.type,
         data.mood || null,
-        data.tags || null
+        data.tags || null,
+        data.sticker || null
       ]
     );
 
@@ -120,6 +121,7 @@ export class TransactionRepository implements BaseRepository<Transaction> {
         data.type,
         data.mood,
         data.tags,
+        data.sticker,
         id
       ]
     );

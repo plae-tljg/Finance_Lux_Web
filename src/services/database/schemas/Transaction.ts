@@ -9,6 +9,7 @@ export interface Transaction {
     type: 'income' | 'expense';  // 类型：收入或支出
     mood: string | null;  // 心情标签（如：😊 😐 😢 😡 🎉）
     tags: string | null;  // 自定义标签，逗号分隔
+    sticker: string | null;  // 贴纸 emoji（如：🍕 🎮 💰）
     createdAt: string;
     updatedAt: string;
 };
@@ -35,7 +36,7 @@ export const SAMPLE_TRANSACTIONS: Omit<Transaction, 'id' | 'createdAt' | 'update
 ];
 
 export const TransactionFields = {
-  UPDATABLE: ['amount', 'categoryId', 'accountId', 'budgetId', 'description', 'date', 'type', 'mood', 'tags'] as const,
+  UPDATABLE: ['amount', 'categoryId', 'accountId', 'budgetId', 'description', 'date', 'type', 'mood', 'tags', 'sticker'] as const,
   REQUIRED: ['amount', 'categoryId', 'accountId', 'budgetId', 'date', 'type'] as const,
   OPTIONAL: ['description', 'mood', 'tags'] as const
 } as const;
@@ -81,8 +82,9 @@ export const TransactionQueries = {
         date, 
         type,
         mood,
-        tags
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        tags,
+        sticker
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     
     UPDATE: `
@@ -96,6 +98,7 @@ export const TransactionQueries = {
           type = COALESCE(?, type),
           mood = COALESCE(?, mood),
           tags = COALESCE(?, tags),
+          sticker = COALESCE(?, sticker),
           updatedAt = CURRENT_TIMESTAMP
       WHERE id = ?
     `,

@@ -468,6 +468,11 @@ export default function Transactions() {
                                 </div>
                             );
                         }
+                    },
+                    {
+                        key: 'sticker',
+                        header: 'Sticker',
+                        render: (value) => value ? String(value) : '-'
                     }
                 ]}
                 title={`${filteredTransactions.length} Transactions`}
