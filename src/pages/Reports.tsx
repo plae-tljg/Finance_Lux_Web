@@ -3,6 +3,7 @@ import { useAppState } from '../contexts/AppStateContext';
 import type { Category } from '../services/database/schemas/Category';
 import type { Account } from '../services/database/schemas/Account';
 import type { Transaction } from '../services/database/schemas/Transaction';
+import { ExportService, type ReportData } from '../services/export';
 
 declare global {
     interface Window {
@@ -96,6 +97,31 @@ export default function Reports() {
 
     const expenseCategories = categorySummary.filter(c => c.category?.type === 'expense');
     const incomeCategories = categorySummary.filter(c => c.category?.type === 'income');
+
+    const reportData: ReportData = useMemo(() => ({
+      selectedMonth,
+      income,
+      expense,
+      netSavings: income - expense,
+      transactions: currentMonthTransactions,
+      categories,
+      accounts,
+      budgets: [],
+      categorySummary,
+      accountSummary,
+    }), [selectedMonth, income, expense, currentMonthTransactions, categories, accounts, categorySummary, accountSummary]);
+
+    const handleExportCSV = () => {
+      ExportService.exportToCSV(reportData, `financial-report-${selectedMonth}`);
+    };
+
+    const handleExportExcel = () => {
+      ExportService.exportToExcel(reportData, `financial-report-${selectedMonth}`);
+    };
+
+    const handleExportPDF = () => {
+      ExportService.exportToPDF(reportData, `financial-report-${selectedMonth}`);
+    };
 
     useEffect(() => {
         if (!window.Chart) return;
@@ -193,7 +219,38 @@ export default function Reports() {
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Reports - {selectedMonth}</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Reports - {selectedMonth}</h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleExportCSV}
+                  className="px-4 py-2 rounded-xl bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-400 font-medium transition-all duration-300 flex items-center gap-2 border border-green-500/20"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  CSV
+                </button>
+                <button
+                  onClick={handleExportExcel}
+                  className="px-4 py-2 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-medium transition-all duration-300 flex items-center gap-2 border border-blue-500/20"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Excel
+                </button>
+                <button
+                  onClick={handleExportPDF}
+                  className="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-medium transition-all duration-300 flex items-center gap-2 border border-red-500/20"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                  PDF
+                </button>
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
