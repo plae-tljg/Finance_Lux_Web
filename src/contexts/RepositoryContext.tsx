@@ -5,11 +5,13 @@ import { BudgetRepository } from '../services/database/repositories/BudgetReposi
 import { TransactionRepository } from '../services/database/repositories/TransactionRepository';
 import { AccountRepository } from '../services/database/repositories/AccountRepository';
 import { AccountBalanceRepository } from '../services/database/repositories/AccountBalanceRepository';
+import { TransferRepository } from '../services/database/repositories/TransferRepository';
 import type { Category } from '../services/database/schemas/Category';
 import type { Budget } from '../services/database/schemas/Budget';
 import type { Transaction } from '../services/database/schemas/Transaction';
 import type { Account } from '../services/database/schemas/Account';
 import type { AccountBalance } from '../services/database/schemas/AccountBalance';
+import type { Transfer } from '../services/database/schemas/Transfer';
 
 interface Repositories {
     categoryRepo: CategoryRepository | null;
@@ -17,6 +19,7 @@ interface Repositories {
     transactionRepo: TransactionRepository | null;
     accountRepo: AccountRepository | null;
     accountBalanceRepo: AccountBalanceRepository | null;
+    transferRepo: TransferRepository | null;
 }
 
 interface RepositoryContextValue extends Repositories {
@@ -36,6 +39,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
                 transactionRepo: null,
                 accountRepo: null,
                 accountBalanceRepo: null,
+                transferRepo: null,
             };
         }
 
@@ -45,6 +49,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
             transactionRepo: new TransactionRepository(dbService),
             accountRepo: new AccountRepository(dbService),
             accountBalanceRepo: new AccountBalanceRepository(dbService),
+            transferRepo: new TransferRepository(dbService),
         };
     }, [dbService]);
 
@@ -108,4 +113,12 @@ export function useAccountBalanceRepository(): AccountBalanceRepository | null {
     return accountBalanceRepo;
 }
 
-export type { Category, Budget, Transaction, Account, AccountBalance };
+export function useTransferRepository(): TransferRepository | null {
+    const { transferRepo, isReady } = useRepositories();
+    if (!isReady || !transferRepo) {
+        return null;
+    }
+    return transferRepo;
+}
+
+export type { Category, Budget, Transaction, Account, AccountBalance, Transfer };

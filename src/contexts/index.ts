@@ -7,11 +7,13 @@ export {
     useTransactionRepository,
     useAccountRepository,
     useAccountBalanceRepository,
+    useTransferRepository,
     type Category,
     type Budget,
     type Transaction,
     type Account,
-    type AccountBalance
+    type AccountBalance,
+    type Transfer
 } from './RepositoryContext';
 export { AppStateProvider, useAppState, useAppDispatch } from './AppStateContext';
 export type { AppState, AppAction } from '../types/app';

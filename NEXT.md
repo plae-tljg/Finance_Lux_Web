@@ -72,7 +72,7 @@
 - [x] LuxurySpinner/LuxurySkeleton 精致加载动画
 
 ### 其他可能方向
-- [ ] 账户间转账功能
+- [x] 账户间转账功能
 - [ ] 预算周期切换（日/周/月/年）
 - [ ] 报表导出（PDF/Excel）
 - [ ] 成就系统/徽章
@@ -90,3 +90,10 @@
 3. 动画和悬浮效果（hover:-translate-y, hover:shadow-2xl）
 4. 主题切换支持
 5. 操作按钮悬浮显示（group-hover 模式）
+
+### 账户间转账功能 ✅
+- [x] Transfer schema（支持 from/to account, amount, description, date）
+- [x] TransferRepository（完整的 CRUD 操作）
+- [x] TransferModal 组件（玻璃态 UI，Luxury 风格）
+- [x] Accounts 页面集成（紫色渐变 Transfer 按钮）
+- [x] 余额自动更新（转账后自动更新账户余额）

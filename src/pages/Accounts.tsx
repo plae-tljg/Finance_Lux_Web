@@ -3,6 +3,7 @@ import { useAppState, useAppDispatch, useAccountRepository } from '../contexts';
 import { Modal } from '../components/ui/Modal';
 import { AddAccountForm } from '../components/forms/AddAccountForm';
 import { AccountBalanceModal } from '../components/forms/AccountBalanceModal';
+import { TransferModal } from '../components/forms/TransferModal';
 import type { Account } from '../services/database/schemas/Account';
 import type { AccountBalance } from '../services/database/schemas/AccountBalance';
 
@@ -28,6 +29,7 @@ export default function Accounts() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [balanceAccount, setBalanceAccount] = useState<Account | null>(null);
     const [showBalanceModal, setShowBalanceModal] = useState(false);
+    const [showTransferModal, setShowTransferModal] = useState(false);
 
     // Search and filters
     const [searchText, setSearchText] = useState('');
@@ -160,12 +162,20 @@ export default function Accounts() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Accounts</h2>
-                <button
-                    onClick={() => setShowAddModal(true)}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
-                >
-                    + Add Account
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => setShowTransferModal(true)}
+                        className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                    >
+                        💸 Transfer
+                    </button>
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                    >
+                        + Add Account
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -394,6 +404,18 @@ export default function Accounts() {
                         }}
                     />
                 )}
+            </Modal>
+
+            <Modal
+                isOpen={showTransferModal}
+                onClose={() => setShowTransferModal(false)}
+                title="Transfer"
+            >
+                <TransferModal
+                    accounts={accounts}
+                    onSuccess={() => setShowTransferModal(false)}
+                    onCancel={() => setShowTransferModal(false)}
+                />
             </Modal>
         </div>
     );
