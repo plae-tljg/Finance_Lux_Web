@@ -11,6 +11,7 @@ import Accounts from './pages/Accounts';
 import Reports from './pages/Reports';
 import Categories from './pages/Categories';
 import Calendar from './pages/Calendar';
+import Goals from './pages/Goals';
 import Debugger from './pages/Debugger';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '/');
@@ -42,6 +43,7 @@ function App() {
                                     <Route path="reports" element={<Reports />} />
                                     <Route path="categories" element={<Categories />} />
                                     <Route path="calendar" element={<Calendar />} />
+                                    <Route path="goals" element={<Goals />} />
                                     <Route path="debugger" element={<Debugger />} />
                                 </Route>
                             </Routes>

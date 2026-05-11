@@ -115,7 +115,8 @@
 - [x] 成就系统/徽章（已完成）
 - [x] 签到奖励（已完成）
 - [x] 主题解锁（已完成）
-- [ ] 节日主题装饰
+- [x] 财务目标系统（已完成）
+- [ ] 表情包/贴纸系统
 
 ## 当前开发迭代
 所有主要页面（Budgets, Accounts, Reports, Categories）已完成 Luxury 增强：
@@ -193,7 +194,7 @@
   - Summer (Jun-Aug) - 橙色渐变
   - Halloween (Oct) - 橙紫渐变
   - Christmas (Dec) - 绿红渐变
-- [ ] 表情包/贴纸系统
+- [x] 表情包/贴纸系统
   - [x] Sticker schema 扩展（sticker 字段）
   - [x] StickerPicker 组件（15个分类，70+贴纸）
   - [x] AddTransactionForm 集成贴纸选择
@@ -203,7 +204,7 @@
   - ShareService - Canvas 生成精美报告图片
   - ShareCard - 主题切换（暗色/亮色）、预览、下载、复制到剪贴板
   - Reports 页面集成分享按钮
-- [ ] 自定义光标图案解锁
+- [x] 自定义光标图案解锁
   - [x] CustomCursor 解锁系统（6种光标样式）
   - [x] 解锁条件：成就数/交易数/连续签到天数
   - [x] 样式：default, purple, gold, rainbow, star, heart
@@ -227,3 +228,23 @@
 
 ### 代码清理
 - [x] Calendar.tsx 移除重复的 useMemo 和 handleDeleteTransaction 函数
+
+### 财务目标系统 ✅
+- [x] Goal schema（支持 name, description, targetAmount, currentAmount, icon, color, deadline, category, priority, status）
+- [x] GoalRepository（完整的 CRUD 操作）
+- [x] GoalService（进度计算、到期天数、是否正常进度）
+- [x] GoalsPage 组件（玻璃态 UI，分类展示，进度条，存入资金）
+- [x] GoalCard 组件（卡片式展示，优先级边框，完成状态标识）
+- [x] GoalForm 组件（创建/编辑目标表单）
+- [x] AppState 集成（goals 状态管理）
+- [x] Layout 导航栏集成（🎯 Goals 页面入口）
+- [x] 目标类别：savings, investment, debt, purchase, emergency, retirement, other
+- [x] 优先级：low, medium, high
+- [x] 状态：active, completed, paused, cancelled
+
+### Goals 目标特性
+- 进度百分比计算和进度条可视化
+- 到期天数计算和预警（7天内红色显示）
+- 是否正常进度判断（基于时间和金额进度比较）
+- 存入资金功能（自动更新进度）
+- 自动完成判定（currentAmount >= targetAmount）

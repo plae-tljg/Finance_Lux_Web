@@ -7,6 +7,7 @@ import { AccountBalanceRepository } from './AccountBalanceRepository';
 import { TransferRepository } from './TransferRepository';
 import { AchievementRepository } from './AchievementRepository';
 import { CheckInRepository } from './CheckInRepository';
+import { GoalRepository } from './GoalRepository';
 
 export {
     CategoryRepository,
@@ -17,5 +18,6 @@ export {
     AccountBalanceRepository,
     TransferRepository,
     AchievementRepository,
-    CheckInRepository
+    CheckInRepository,
+    GoalRepository
 };

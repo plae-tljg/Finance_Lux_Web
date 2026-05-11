@@ -3,6 +3,7 @@ import type { Budget } from '../services/database/schemas/Budget';
 import type { Transaction } from '../services/database/schemas/Transaction';
 import type { Account } from '../services/database/schemas/Account';
 import type { AccountBalance } from '../services/database/schemas/AccountBalance';
+import type { Goal } from '../services/database/schemas/Goal';
 
 export interface AppState {
     categories: Category[];
@@ -10,6 +11,7 @@ export interface AppState {
     transactions: Transaction[];
     accounts: Account[];
     accountBalances: AccountBalance[];
+    goals: Goal[];
     isLoading: boolean;
     selectedMonth: string;
     dbVersion: string;
@@ -38,6 +40,10 @@ export type AppAction =
     | { type: 'ADD_ACCOUNT_BALANCE'; payload: AccountBalance }
     | { type: 'UPDATE_ACCOUNT_BALANCE'; payload: AccountBalance }
     | { type: 'DELETE_ACCOUNT_BALANCE'; payload: number }
+    | { type: 'SET_GOALS'; payload: Goal[] }
+    | { type: 'ADD_GOAL'; payload: Goal }
+    | { type: 'UPDATE_GOAL'; payload: Goal }
+    | { type: 'DELETE_GOAL'; payload: number }
     | { type: 'SET_LOADING'; payload: boolean }
     | { type: 'SET_SELECTED_MONTH'; payload: string }
     | { type: 'SET_DB_VERSION'; payload: string }
@@ -50,6 +56,7 @@ export type AppAction =
         transactions: Transaction[];
         accounts: Account[];
         accountBalances: AccountBalance[];
+        goals?: Goal[];
     }};
 
 export function appReducer(state: AppState, action: AppAction): AppState {
@@ -134,6 +141,22 @@ export function appReducer(state: AppState, action: AppAction): AppState {
                 ...state,
                 accountBalances: state.accountBalances.filter(ab => ab.id !== action.payload),
             };
+        case 'SET_GOALS':
+            return { ...state, goals: action.payload };
+        case 'ADD_GOAL':
+            return { ...state, goals: [...state.goals, action.payload] };
+        case 'UPDATE_GOAL':
+            return {
+                ...state,
+                goals: state.goals.map(g =>
+                    g.id === action.payload.id ? action.payload : g
+                ),
+            };
+        case 'DELETE_GOAL':
+            return {
+                ...state,
+                goals: state.goals.filter(g => g.id !== action.payload),
+            };
         case 'SET_LOADING':
             return { ...state, isLoading: action.payload };
         case 'SET_SELECTED_MONTH':
@@ -156,6 +179,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
                 transactions: action.payload.transactions,
                 accounts: action.payload.accounts,
                 accountBalances: action.payload.accountBalances,
+                goals: action.payload.goals || state.goals,
             };
         default:
             return state;
@@ -168,6 +192,7 @@ export const initialState: AppState = {
     transactions: [],
     accounts: [],
     accountBalances: [],
+    goals: [],
     isLoading: false,
     selectedMonth: new Date().toISOString().slice(0, 7),
     dbVersion: '1.0.0',

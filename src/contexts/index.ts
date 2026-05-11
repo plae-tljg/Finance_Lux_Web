@@ -8,12 +8,14 @@ export {
     useAccountRepository,
     useAccountBalanceRepository,
     useTransferRepository,
+    useGoalRepository,
     type Category,
     type Budget,
     type Transaction,
     type Account,
     type AccountBalance,
-    type Transfer
+    type Transfer,
+    type Goal
 } from './RepositoryContext';
 export { AppStateProvider, useAppState, useAppDispatch } from './AppStateContext';
 export type { AppState, AppAction } from '../types/app';
