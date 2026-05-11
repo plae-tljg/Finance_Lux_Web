@@ -50,6 +50,7 @@
 - [x] 流畅过渡动画和悬浮效果
 - [x] 主题切换支持
 - [x] 报表导出功能（CSV/Excel/PDF）
+- [x] 6个月收支趋势折线图（Income vs Expense Trend）
 
 ### Categories 页面 Luxury 增强 ✅
 - [x] 玻璃态效果卡片（glassmorphism）
