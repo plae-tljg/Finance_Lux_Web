@@ -208,6 +208,13 @@
   - [x] 解锁条件：成就数/交易数/连续签到天数
   - [x] 样式：default, purple, gold, rainbow, star, heart
   - [x] 悬浮按钮切换光标样式
+### Transactions 页面 Luxury 增强 ✅
+- [x] 玻璃态效果卡片（backdrop-blur-xl）
+- [x] 渐变标题和按钮样式
+- [x] 流畅过渡动画和悬浮效果（hover:-translate-y, hover:shadow-2xl）
+- [x] 主题切换支持
+- [x] 统计卡片渐变色进度条
+
 ### Calendar View 日历视图 ✅
 - [x] Calendar.tsx 页面组件
 - [x] 月视图显示（42格日历网格）

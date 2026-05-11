@@ -203,49 +203,53 @@ export default function Transactions() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">Transactions</h2>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Transactions</h2>
                 <button
                     onClick={() => setShowAddModal(true)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 active:scale-95"
                 >
                     + Add Transaction
                 </button>
             </div>
 
             {/* Stats Summary */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Showing</div>
-                    <div className="text-2xl font-bold">{stats.count} transactions</div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Showing</div>
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white group-hover:scale-105 transition-transform">{stats.count} transactions</div>
+                    <div className="mt-2 h-1 bg-gradient-to-r from-blue-500/50 to-blue-500 rounded-full" />
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Income</div>
-                    <div className="text-2xl font-bold text-green-600">+¥{stats.income.toLocaleString()}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Income</div>
+                    <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">+¥{stats.income.toLocaleString()}</div>
+                    <div className="mt-2 h-1 bg-gradient-to-r from-green-500/50 to-green-500 rounded-full" />
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Expense</div>
-                    <div className="text-2xl font-bold text-red-600">-¥{stats.expense.toLocaleString()}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Expense</div>
+                    <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">-¥{stats.expense.toLocaleString()}</div>
+                    <div className="mt-2 h-1 bg-gradient-to-r from-red-500/50 to-red-500 rounded-full" />
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Net</div>
-                    <div className={`text-2xl font-bold ${stats.income - stats.expense >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Net</div>
+                    <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${stats.income - stats.expense >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
                         {stats.income - stats.expense >= 0 ? '+' : '-'}¥{Math.abs(stats.income - stats.expense).toLocaleString()}
                     </div>
+                    <div className={`mt-2 h-1 bg-gradient-to-r rounded-full ${stats.income - stats.expense >= 0 ? 'from-blue-500/50 to-blue-500' : 'from-red-500/50 to-red-500'}`} />
                 </div>
             </div>
 
             {/* Search and Basic Filters */}
-            <div className="bg-white rounded-xl shadow p-4 space-y-4">
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 space-y-4">
                 {/* Date Preset Buttons */}
                 <div className="flex flex-wrap gap-2">
                     {datePresets.map(preset => (
                         <button
                             key={preset.value}
                             onClick={() => handleDatePresetChange(preset.value)}
-                            className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                            className={`px-3 py-1.5 text-sm rounded-lg transition-all duration-300 ${
                                 datePreset === preset.value
-                                    ? 'bg-blue-500 text-white'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/30'
+                                    : 'bg-gray-100/50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-white/80 dark:hover:bg-gray-700/80 hover:shadow-md'
                             }`}
                         >
                             {preset.label}
@@ -255,21 +259,21 @@ export default function Transactions() {
 
                 <div className="flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-64">
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Search</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Search</label>
                         <input
                             type="text"
                             placeholder="Search description..."
                             value={searchText}
                             onChange={e => setSearchText(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Type</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Type</label>
                         <select
                             value={filterType}
                             onChange={e => setFilterType(e.target.value as 'all' | 'income' | 'expense')}
-                            className="px-4 py-2 border rounded-lg bg-white"
+                            className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100"
                         >
                             <option value="all">All Types</option>
                             <option value="income">Income</option>
@@ -277,11 +281,11 @@ export default function Transactions() {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Category</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Category</label>
                         <select
                             value={filterCategory}
                             onChange={e => setFilterCategory(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                            className="px-4 py-2 border rounded-lg bg-white"
+                            className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100"
                         >
                             <option value="all">All Categories</option>
                             {categories.map((c: Category) => (
@@ -290,11 +294,11 @@ export default function Transactions() {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Account</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Account</label>
                         <select
                             value={filterAccount}
                             onChange={e => setFilterAccount(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                            className="px-4 py-2 border rounded-lg bg-white"
+                            className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100"
                         >
                             <option value="all">All Accounts</option>
                             {accounts.map((a: Account) => (
@@ -304,14 +308,14 @@ export default function Transactions() {
                     </div>
                     <button
                         onClick={() => setShowAdvanced(!showAdvanced)}
-                        className="px-4 py-2 text-blue-500 hover:bg-blue-50 rounded-lg border border-blue-200"
+                        className="px-4 py-2 text-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/30 rounded-xl border border-blue-200/50 dark:border-blue-700/50 transition-all duration-300"
                     >
                         {showAdvanced ? 'Hide Advanced' : 'Advanced'}
                     </button>
                     {hasActiveFilters && (
                         <button
                             onClick={clearFilters}
-                            className="px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg border border-red-200"
+                            className="px-4 py-2 text-red-500 hover:bg-red-50/50 dark:hover:bg-red-900/30 rounded-xl border border-red-200/50 dark:border-red-700/50 transition-all duration-300"
                         >
                             Clear Filters
                         </button>
@@ -320,51 +324,51 @@ export default function Transactions() {
 
                 {/* Advanced Filters */}
                 {showAdvanced && (
-                    <div className="flex flex-wrap gap-4 items-end pt-4 border-t">
+                    <div className="flex flex-wrap gap-4 items-end pt-4 border-t border-gray-200/30 dark:border-gray-700/30">
                         <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">From Date</label>
+                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">From Date</label>
                             <input
                                 type="date"
                                 value={dateFrom}
                                 onChange={e => setDateFrom(e.target.value)}
-                                className="px-4 py-2 border rounded-lg"
+                                className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">To Date</label>
+                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">To Date</label>
                             <input
                                 type="date"
                                 value={dateTo}
                                 onChange={e => setDateTo(e.target.value)}
-                                className="px-4 py-2 border rounded-lg"
+                                className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">Min Amount</label>
+                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Min Amount</label>
                             <input
                                 type="number"
                                 placeholder="0"
                                 value={amountMin}
                                 onChange={e => setAmountMin(e.target.value)}
-                                className="px-4 py-2 border rounded-lg w-32"
+                                className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100 w-32"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">Max Amount</label>
+                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Max Amount</label>
                             <input
                                 type="number"
                                 placeholder="999999"
                                 value={amountMax}
                                 onChange={e => setAmountMax(e.target.value)}
-                                className="px-4 py-2 border rounded-lg w-32"
+                                className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100 w-32"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">Mood</label>
+                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Mood</label>
                             <select
                                 value={filterMood}
                                 onChange={e => setFilterMood(e.target.value)}
-                                className="px-4 py-2 border rounded-lg bg-white"
+                                className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100"
                             >
                                 <option value="all">All Moods</option>
                                 <option value="😊">😊</option>
@@ -378,13 +382,13 @@ export default function Transactions() {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">Tag</label>
+                            <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Tag</label>
                             <input
                                 type="text"
                                 placeholder="Filter by tag..."
                                 value={filterTag}
                                 onChange={e => setFilterTag(e.target.value)}
-                                className="px-4 py-2 border rounded-lg w-40"
+                                className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all text-gray-900 dark:text-gray-100 w-40"
                             />
                         </div>
                     </div>
