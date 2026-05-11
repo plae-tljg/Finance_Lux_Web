@@ -107,6 +107,9 @@
 - [x] Luxury button styling with hover effects
 - [x] Gradient header text for page title
 
+### 代码清理
+- [x] Calendar.tsx 移除重复的 useMemo 和 handleDeleteTransaction 函数
+
 ## 新创意想法
 - [x] Pet Companion 宠物伙伴系统（已完成）
 - [x] 成就系统/徽章（已完成）
@@ -214,3 +217,6 @@
 - [x] 月/周视图切换按钮
 - [x] 今日标记和导航按钮
 - [x] 玻璃态 UI 效果
+
+### 代码清理
+- [x] Calendar.tsx 移除重复的 useMemo 和 handleDeleteTransaction 函数
