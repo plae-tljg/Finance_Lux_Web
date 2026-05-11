@@ -3,6 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppStateContext';
 import { ParticleBackground, EasterEggs, PetCompanion, CustomCursor, ThemeSelector, HolidayDecorations } from '../effects';
 import { AchievementsPanel, AchievementBadge } from '../achievements';
+import { loadSettings } from '../../services/settings/SettingsService';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '');
 
@@ -15,6 +16,7 @@ const navItems = [
     { to: '/calendar', label: 'Calendar', icon: '📅' },
     { to: '/goals', label: 'Goals', icon: '🎯' },
     { to: '/reports', label: 'Reports', icon: '📈' },
+    { to: '/settings', label: 'Settings', icon: '⚙️' },
     { to: '/debugger', label: 'Debugger', icon: '🔧' },
 ];
 
@@ -24,6 +26,7 @@ export default function Layout() {
     const bgImage = `${BASE_PATH}/background_zhuang.jpg`;
     const [showAchievements, setShowAchievements] = useState(false);
     const [customTheme, setCustomTheme] = useState(theme);
+    const settings = useState(() => loadSettings())[0];
 
     useEffect(() => {
         const handleThemeChange = (e: CustomEvent) => {
@@ -57,10 +60,10 @@ export default function Layout() {
                 <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pointer-events-none" />
             )}
 
-            <ParticleBackground />
+            {settings.showParticles && <ParticleBackground />}
             <HolidayDecorations />
             <EasterEggs />
-            <PetCompanion />
+            {settings.showPet && <PetCompanion />}
             <CustomCursor />
 
             <div className={`min-h-screen ${customTheme === 'light' ? '' : 'bg-black/30'}`}>

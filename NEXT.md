@@ -282,3 +282,15 @@
 - [x] 定期支出分析（subscription/recurring 检测）
 - [x] 玻璃态 UI 效果卡片（多种类型样式：success/warning/info/tip）
 - [x] Dashboard 集成（Financial Insights 区块）
+
+### Settings 页面 ✅
+- [x] Settings 页面（用户偏好设置）
+- [x] 语言切换（中/英文）
+- [x] 货币符号选择（¥/$/€/£）
+- [x] 周起始日选择（周日/周一）
+- [x] 显示模式切换（紧凑模式/宠物显示/粒子效果）
+- [x] 数据备份导出（JSON 格式）
+- [x] 数据恢复导入（支持设置一起恢复）
+- [x] 数据统计展示（交易/账户/分类/预算/目标数量）
+- [x] 危险操作区（清除所有数据）
+- [x] SettingsService（设置存储和加载）
