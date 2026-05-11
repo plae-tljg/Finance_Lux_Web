@@ -181,5 +181,8 @@
   - Christmas (Dec) - 绿红渐变
 - [ ] 表情包/贴纸系统
 - [x] 备注心情/标签功能（Transaction 增加 mood 和 tags 字段）
-- [ ] 分享功能（生成精美图片）
+- [x] 分享功能（生成精美图片）
+  - ShareService - Canvas 生成精美报告图片
+  - ShareCard - 主题切换（暗色/亮色）、预览、下载、复制到剪贴板
+  - Reports 页面集成分享按钮
 - [ ] 自定义光标图案解锁
