@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAppState, useAppDispatch, useTransactionRepository } from '../contexts';
 import { Modal } from '../components/ui/Modal';
 import { AddTransactionForm } from '../components/forms/AddTransactionForm';
+import { DataTable, type Column } from '../components/ui/DataTable';
 import type { Category } from '../services/database/schemas/Category';
 import type { Account } from '../services/database/schemas/Account';
 import type { Transaction } from '../services/database/schemas/Transaction';
@@ -352,92 +353,103 @@ export default function Transactions() {
                 )}
             </div>
 
-            {/* Transactions Table */}
-            <div className="bg-white rounded-xl shadow overflow-hidden">
-                {filteredTransactions.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
-                        {hasActiveFilters ? 'No transactions match your filters' : 'No transactions yet'}
-                    </div>
-                ) : (
-                    <table className="w-full">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th
-                                    className="px-6 py-3 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100"
-                                    onClick={() => toggleSort('date')}
-                                >
-                                    Date{getSortIndicator('date')}
-                                </th>
-                                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Description</th>
-                                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Category</th>
-                                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Account</th>
-                                <th
-                                    className="px-6 py-3 text-right text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100"
-                                    onClick={() => toggleSort('amount')}
-                                >
-                                    Amount{getSortIndicator('amount')}
-                                </th>
-                                <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {filteredTransactions.map((t: Transaction) => {
-                                const category = categories.find((c: Category) => c.id === t.categoryId);
-                                const account = accounts.find((a: Account) => a.id === t.accountId);
-                                return (
-                                    <tr key={t.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 text-sm">{formatDate(t.date)}</td>
-                                        <td className="px-6 py-4 font-medium">{t.description || '-'}</td>
-                                        <td className="px-6 py-4">
-                                            <span className="flex items-center gap-2">
-                                                <span>{category?.icon}</span>
-                                                <span>{category?.name}</span>
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="flex items-center gap-2">
-                                                <span>{account?.icon}</span>
-                                                <span>{account?.name}</span>
-                                            </span>
-                                        </td>
-                                        <td className={`px-6 py-4 text-right font-semibold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                                            {t.type === 'income' ? '+' : '-'}¥{t.amount.toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <button
-                                                onClick={() => {
-                                                    setEditingTransaction(t);
-                                                    setShowEditModal(true);
-                                                }}
-                                                className="text-blue-500 hover:text-blue-700 mr-3"
-                                            >
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={async () => {
-                                                    if (!transactionRepo) return;
-                                                    if (window.confirm(`Delete transaction "${t.description || t.id}"?`)) {
-                                                        try {
-                                                            await transactionRepo.delete(t.id);
-                                                            dispatch({ type: 'DELETE_TRANSACTION', payload: t.id });
-                                                        } catch (err) {
-                                                            console.error('Failed to delete transaction:', err);
-                                                            alert('Failed to delete transaction');
-                                                        }
-                                                    }
-                                                }}
-                                                className="text-red-500 hover:text-red-700"
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                )}
-            </div>
+            {/* Transactions Table with Luxury DataTable */}
+            <DataTable
+                data={filteredTransactions}
+                columns={[
+                    {
+                        key: 'date',
+                        header: 'Date',
+                        sortable: true,
+                        render: (value) => formatDate(String(value))
+                    },
+                    {
+                        key: 'description',
+                        header: 'Description',
+                        render: (value) => value || '-'
+                    },
+                    {
+                        key: 'categoryId',
+                        header: 'Category',
+                        sortable: true,
+                        render: (_, item) => {
+                            const category = categories.find((c: Category) => c.id === (item as Transaction).categoryId);
+                            return (
+                                <span className="flex items-center gap-2">
+                                    <span>{category?.icon}</span>
+                                    <span>{category?.name}</span>
+                                </span>
+                            );
+                        }
+                    },
+                    {
+                        key: 'accountId',
+                        header: 'Account',
+                        sortable: true,
+                        render: (_, item) => {
+                            const account = accounts.find((a: Account) => a.id === (item as Transaction).accountId);
+                            return (
+                                <span className="flex items-center gap-2">
+                                    <span>{account?.icon}</span>
+                                    <span>{account?.name}</span>
+                                </span>
+                            );
+                        }
+                    },
+                    {
+                        key: 'amount',
+                        header: 'Amount',
+                        sortable: true,
+                        render: (value, item) => {
+                            const t = item as Transaction;
+                            return (
+                                <span className={`font-semibold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                                    {t.type === 'income' ? '+' : '-'}¥{Number(value).toLocaleString()}
+                                </span>
+                            );
+                        }
+                    }
+                ]}
+                title={`${filteredTransactions.length} Transactions`}
+                emptyMessage={hasActiveFilters ? 'No transactions match your filters' : 'No transactions yet'}
+                onRowEdit={(item) => {
+                    setEditingTransaction(item as Transaction);
+                    setShowEditModal(true);
+                }}
+                onRowDelete={async (item) => {
+                    if (!transactionRepo) return;
+                    const t = item as Transaction;
+                    if (window.confirm(`Delete transaction "${t.description || t.id}"?`)) {
+                        try {
+                            await transactionRepo.delete(t.id);
+                            dispatch({ type: 'DELETE_TRANSACTION', payload: t.id });
+                        } catch (err) {
+                            console.error('Failed to delete transaction:', err);
+                            alert('Failed to delete transaction');
+                        }
+                    }
+                }}
+                onBulkDelete={async (items) => {
+                    if (!transactionRepo) return;
+                    if (window.confirm(`Delete ${items.length} transactions?`)) {
+                        try {
+                            for (const item of items) {
+                                const t = item as Transaction;
+                                await transactionRepo.delete(t.id);
+                                dispatch({ type: 'DELETE_TRANSACTION', payload: t.id });
+                            }
+                        } catch (err) {
+                            console.error('Failed to delete transactions:', err);
+                            alert('Failed to delete transactions');
+                        }
+                    }
+                }}
+                searchable
+                pageable
+                pageSizeOptions={[10, 20, 50, 100]}
+                exportable
+                exportFileName="transactions"
+            />
 
             <Modal
                 isOpen={showAddModal}
