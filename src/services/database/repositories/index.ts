@@ -8,6 +8,7 @@ import { TransferRepository } from './TransferRepository';
 import { AchievementRepository } from './AchievementRepository';
 import { CheckInRepository } from './CheckInRepository';
 import { GoalRepository } from './GoalRepository';
+import { RecurringTransactionRepository } from './RecurringTransactionRepository';
 
 export {
     CategoryRepository,
@@ -19,5 +20,6 @@ export {
     TransferRepository,
     AchievementRepository,
     CheckInRepository,
-    GoalRepository
+    GoalRepository,
+    RecurringTransactionRepository
 };

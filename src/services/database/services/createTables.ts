@@ -1,4 +1,4 @@
-import { CategoryRepository, BudgetRepository, TransactionRepository, AccountRepository, AccountBalanceRepository, TransferRepository, AchievementRepository } from '../repositories';
+import { CategoryRepository, BudgetRepository, TransactionRepository, AccountRepository, AccountBalanceRepository, TransferRepository, AchievementRepository, RecurringTransactionRepository } from '../repositories';
 import { checkIfDataExists } from './checkTables';
 import { type Database } from 'sql.js';
 import DatabaseService from '../DatabaseService';
@@ -10,6 +10,7 @@ const repositories = [
     BudgetRepository,
     TransactionRepository,
     TransferRepository,
+    RecurringTransactionRepository,
     AchievementRepository
 ]
 

@@ -259,3 +259,14 @@
 
 ### 代码清理
 - [x] Goals.tsx: 格式化缩进（4空格统一为 4 空格）
+
+### Recurring Transactions System ✅
+- [x] RecurringTransaction schema（支持 frequency, nextDueDate, isActive 字段）
+- [x] RecurringTransactionRepository（完整的 CRUD 操作 + findDueBefore）
+- [x] RecurringTransactionService（自动计算下次日期、处理到期交易）
+- [x] RecurringTransactionModal 组件（玻璃态 UI，Luxury 风格）
+- [x] RecurringTransactionsList 组件（展示所有定期交易，可激活/暂停）
+- [x] Transactions 页面集成（Recurring 切换按钮）
+- [x] 频率选项：daily, weekly, monthly, yearly
+- [x] 自动创建交易功能（首次创建时如果日期是今天则立即生成）
+- [x] 余额自动更新（转账后自动更新账户余额）

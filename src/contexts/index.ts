@@ -9,12 +9,14 @@ export {
     useAccountBalanceRepository,
     useTransferRepository,
     useGoalRepository,
+    useRecurringTransactionRepository,
     type Category,
     type Budget,
     type Transaction,
     type Account,
     type AccountBalance,
     type Transfer,
+    type RecurringTransaction,
     type Goal
 } from './RepositoryContext';
 export { AppStateProvider, useAppState, useAppDispatch } from './AppStateContext';

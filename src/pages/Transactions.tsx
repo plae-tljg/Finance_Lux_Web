@@ -3,6 +3,7 @@ import { useAppState, useAppDispatch, useTransactionRepository } from '../contex
 import { Modal } from '../components/ui/Modal';
 import { AddTransactionForm } from '../components/forms/AddTransactionForm';
 import { DataTable, type Column } from '../components/ui/DataTable';
+import { RecurringTransactionsList } from '../components/forms/RecurringTransactionsList';
 import type { Category } from '../services/database/schemas/Category';
 import type { Account } from '../services/database/schemas/Account';
 import type { Transaction } from '../services/database/schemas/Transaction';
@@ -19,6 +20,7 @@ export default function Transactions() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showRecurring, setShowRecurring] = useState(false);
 
     // Search and filters
     const [searchText, setSearchText] = useState('');
@@ -204,12 +206,24 @@ export default function Transactions() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Transactions</h2>
-                <button
-                    onClick={() => setShowAddModal(true)}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 active:scale-95"
-                >
-                    + Add Transaction
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={() => setShowRecurring(!showRecurring)}
+                        className={`px-4 py-2 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 ${
+                            showRecurring
+                                ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-purple-500/30'
+                                : 'bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm text-gray-700 dark:text-gray-200 border border-gray-200/50 dark:border-gray-700/50 hover:bg-white/80 dark:hover:bg-gray-800/80'
+                        }`}
+                    >
+                        🔄 Recurring
+                    </button>
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:scale-105 active:scale-95"
+                    >
+                        + Add Transaction
+                    </button>
+                </div>
             </div>
 
             {/* Stats Summary */}
@@ -237,6 +251,10 @@ export default function Transactions() {
                     <div className={`mt-2 h-1 bg-gradient-to-r rounded-full ${stats.income - stats.expense >= 0 ? 'from-blue-500/50 to-blue-500' : 'from-red-500/50 to-red-500'}`} />
                 </div>
             </div>
+
+            {showRecurring && (
+                <RecurringTransactionsList />
+            )}
 
             {/* Search and Basic Filters */}
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 space-y-4">

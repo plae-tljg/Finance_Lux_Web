@@ -6,6 +6,7 @@ import { TransactionRepository } from '../services/database/repositories/Transac
 import { AccountRepository } from '../services/database/repositories/AccountRepository';
 import { AccountBalanceRepository } from '../services/database/repositories/AccountBalanceRepository';
 import { TransferRepository } from '../services/database/repositories/TransferRepository';
+import { RecurringTransactionRepository } from '../services/database/repositories/RecurringTransactionRepository';
 import { AchievementRepository } from '../services/database/repositories/AchievementRepository';
 import { CheckInRepository } from '../services/database/repositories/CheckInRepository';
 import { GoalRepository } from '../services/database/repositories/GoalRepository';
@@ -15,6 +16,7 @@ import type { Transaction } from '../services/database/schemas/Transaction';
 import type { Account } from '../services/database/schemas/Account';
 import type { AccountBalance } from '../services/database/schemas/AccountBalance';
 import type { Transfer } from '../services/database/schemas/Transfer';
+import type { RecurringTransaction } from '../services/database/schemas/RecurringTransaction';
 import type { Achievement } from '../services/database/schemas/Achievement';
 import type { CheckIn } from '../services/database/schemas/CheckIn';
 import type { Goal } from '../services/database/schemas/Goal';
@@ -26,6 +28,7 @@ interface Repositories {
     accountRepo: AccountRepository | null;
     accountBalanceRepo: AccountBalanceRepository | null;
     transferRepo: TransferRepository | null;
+    recurringTransactionRepo: RecurringTransactionRepository | null;
     achievementRepo: AchievementRepository | null;
     checkInRepo: CheckInRepository | null;
     goalRepo: GoalRepository | null;
@@ -49,6 +52,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
                 accountRepo: null,
                 accountBalanceRepo: null,
                 transferRepo: null,
+                recurringTransactionRepo: null,
                 achievementRepo: null,
                 checkInRepo: null,
                 goalRepo: null,
@@ -62,6 +66,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
             accountRepo: new AccountRepository(dbService),
             accountBalanceRepo: new AccountBalanceRepository(dbService),
             transferRepo: new TransferRepository(dbService),
+            recurringTransactionRepo: new RecurringTransactionRepository(dbService),
             achievementRepo: new AchievementRepository(dbService),
             checkInRepo: new CheckInRepository(dbService),
             goalRepo: new GoalRepository(dbService),
@@ -160,4 +165,12 @@ export function useGoalRepository(): GoalRepository | null {
     return goalRepo;
 }
 
-export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, Achievement, CheckIn, Goal };
+export function useRecurringTransactionRepository(): RecurringTransactionRepository | null {
+    const { recurringTransactionRepo, isReady } = useRepositories();
+    if (!isReady || !recurringTransactionRepo) {
+        return null;
+    }
+    return recurringTransactionRepo;
+}
+
+export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, RecurringTransaction, Achievement, CheckIn, Goal };
