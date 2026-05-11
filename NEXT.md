@@ -169,3 +169,17 @@
 - 🌲 Forest - 创建3个预算
 - 🌅 Sunset - 添加10笔交易
 - 🌊 Ocean - 创建3个账户
+
+## 待开发功能
+- [x] 节日主题装饰（春节/圣诞/万圣节主题皮肤）
+  - Chinese New Year (Jan 1 - Feb 15) - 红色金色渐变
+  - Valentine (Feb) - 粉色渐变
+  - Spring (Mar-Apr) - 绿色渐变
+  - Easter (Mar-Apr) - 紫粉黄渐变
+  - Summer (Jun-Aug) - 橙色渐变
+  - Halloween (Oct) - 橙紫渐变
+  - Christmas (Dec) - 绿红渐变
+- [ ] 表情包/贴纸系统
+- [ ] 备注心情/标签功能
+- [ ] 分享功能（生成精美图片）
+- [ ] 自定义光标图案解锁

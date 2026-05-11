@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppStateContext';
-import { ParticleBackground, EasterEggs, PetCompanion, CustomCursor, ThemeSelector } from '../effects';
+import { ParticleBackground, EasterEggs, PetCompanion, CustomCursor, ThemeSelector, HolidayDecorations } from '../effects';
 import { AchievementsPanel, AchievementBadge } from '../achievements';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '');
@@ -56,6 +56,7 @@ export default function Layout() {
             )}
 
             <ParticleBackground />
+            <HolidayDecorations />
             <EasterEggs />
             <PetCompanion />
             <CustomCursor />
