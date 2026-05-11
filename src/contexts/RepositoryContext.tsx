@@ -6,12 +6,14 @@ import { TransactionRepository } from '../services/database/repositories/Transac
 import { AccountRepository } from '../services/database/repositories/AccountRepository';
 import { AccountBalanceRepository } from '../services/database/repositories/AccountBalanceRepository';
 import { TransferRepository } from '../services/database/repositories/TransferRepository';
+import { AchievementRepository } from '../services/database/repositories/AchievementRepository';
 import type { Category } from '../services/database/schemas/Category';
 import type { Budget } from '../services/database/schemas/Budget';
 import type { Transaction } from '../services/database/schemas/Transaction';
 import type { Account } from '../services/database/schemas/Account';
 import type { AccountBalance } from '../services/database/schemas/AccountBalance';
 import type { Transfer } from '../services/database/schemas/Transfer';
+import type { Achievement } from '../services/database/schemas/Achievement';
 
 interface Repositories {
     categoryRepo: CategoryRepository | null;
@@ -20,6 +22,7 @@ interface Repositories {
     accountRepo: AccountRepository | null;
     accountBalanceRepo: AccountBalanceRepository | null;
     transferRepo: TransferRepository | null;
+    achievementRepo: AchievementRepository | null;
 }
 
 interface RepositoryContextValue extends Repositories {
@@ -40,6 +43,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
                 accountRepo: null,
                 accountBalanceRepo: null,
                 transferRepo: null,
+                achievementRepo: null,
             };
         }
 
@@ -50,6 +54,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
             accountRepo: new AccountRepository(dbService),
             accountBalanceRepo: new AccountBalanceRepository(dbService),
             transferRepo: new TransferRepository(dbService),
+            achievementRepo: new AchievementRepository(dbService),
         };
     }, [dbService]);
 
@@ -121,4 +126,12 @@ export function useTransferRepository(): TransferRepository | null {
     return transferRepo;
 }
 
-export type { Category, Budget, Transaction, Account, AccountBalance, Transfer };
+export function useAchievementRepository(): AchievementRepository | null {
+    const { achievementRepo, isReady } = useRepositories();
+    if (!isReady || !achievementRepo) {
+        return null;
+    }
+    return achievementRepo;
+}
+
+export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, Achievement };

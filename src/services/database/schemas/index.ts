@@ -3,12 +3,14 @@ export type { Transaction } from './Transaction';
 export type { Budget } from './Budget';
 export type { Account } from './Account';
 export type { AccountBalance } from './AccountBalance';
+export type { Achievement, AchievementCategory } from './Achievement';
 
 import { DEFAULT_CATEGORIES, CategoryQueries, CATEGORY_INDEXES } from './Category';
 import { SAMPLE_TRANSACTIONS, TransactionQueries, TRANSACTION_INDEXES } from './Transaction';
 import { SAMPLE_BUDGETS, BudgetQueries, BUDGET_INDEXES } from './Budget';
 import { DEFAULT_ACCOUNTS, AccountQueries, ACCOUNT_INDEXES } from './Account';
 import { SAMPLE_ACCOUNT_BALANCES, AccountBalanceQueries, ACCOUNT_BALANCE_INDEXES } from './AccountBalance';
+import { AchievementQueries, ACHIEVEMENT_INDEXES } from './Achievement';
 
 export const SCHEMA_VERSIONS = {
   v1: '1.0.0',
@@ -21,6 +23,7 @@ export const SCHEMAS = {
   account_balances: AccountBalanceQueries.CREATE_TABLE,
   budgets: BudgetQueries.CREATE_TABLE,
   transactions: TransactionQueries.CREATE_TABLE,
+  achievements: AchievementQueries.CREATE_TABLE,
 };
 
 export const SCHEMAS_SAMPLE_DATA = {
@@ -41,4 +44,5 @@ export const SCHEMAS_INDEXES = [
   ...ACCOUNT_BALANCE_INDEXES,
   ...TRANSACTION_INDEXES,
   ...BUDGET_INDEXES,
+  ...ACHIEVEMENT_INDEXES,
 ]

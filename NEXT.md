@@ -76,9 +76,10 @@
 - [x] 账户间转账功能
 - [x] 预算周期切换（日/周/月/年）
 - [x] 报表导出（PDF/Excel）
-- [ ] 成就系统/徽章
+- [x] 成就系统/徽章
 
 ## 新创意想法
+- [x] 成就系统/徽章（已完成）
 - 添加 Arknights 风格的小动物动画角色
 - 节日主题装饰
 - 签到奖励
@@ -98,3 +99,30 @@
 - [x] TransferModal 组件（玻璃态 UI，Luxury 风格）
 - [x] Accounts 页面集成（紫色渐变 Transfer 按钮）
 - [x] 余额自动更新（转账后自动更新账户余额）
+
+### 成就系统/徽章 ✅
+- [x] Achievement schema（支持多种成就类别）
+- [x] AchievementRepository（完整的 CRUD 和进度跟踪）
+- [x] AchievementsPanel 组件（玻璃态 UI，分类展示，进度条）
+- [x] AchievementBadge 组件（导航栏徽章，显示完成度）
+- [x] AchievementService（成就检查和解锁逻辑）
+- [x] Layout 集成（AchievementBadge + AchievementsPanel）
+- [x] 成就类别：transactions, budgets, accounts, consistency, social, special
+
+### 成就列表
+- 🎯 First Step - 记录第一笔交易
+- 📝 Getting Started - 记录 10 笔交易
+- 📚 Active Recorder - 记录 50 笔交易
+- 👑 Data Master - 记录 100 笔交易
+- 📋 Budget Builder - 创建第一个预算
+- 🎯 Planner - 创建 5 个预算
+- 🏆 Master Planner - 创建 10 个预算
+- 🏦 Account Opener - 添加第一个账户
+- 💼 Portfolio - 拥有 3 个账户
+- 🏦 Banker - 拥有 5 个账户
+- 🔥 Week Warrior - 连续 7 天记录交易
+- ⭐ Month Master - 连续 30 天记录交易
+- 📤 Sharer - 导出一份报表
+- 💸 Money Mover - 完成第一次转账
+- 🦉 Night Owl - 使用暗黑模式
+- 🦎 Chameleon - 切换主题 10 次

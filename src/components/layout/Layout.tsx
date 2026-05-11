@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppStateContext';
 import { ParticleBackground, EasterEggs } from '../effects';
+import { AchievementsPanel, AchievementBadge } from '../achievements';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '');
 
@@ -18,6 +20,7 @@ export default function Layout() {
     const { state, actions } = useAppState();
     const { theme } = state;
     const bgImage = `${BASE_PATH}/background_zhuang.jpg`;
+    const [showAchievements, setShowAchievements] = useState(false);
 
     return (
         <div
@@ -46,6 +49,7 @@ export default function Layout() {
                                 </h1>
                             </div>
                             <nav className="flex gap-2 flex-wrap items-center">
+                                <AchievementBadge onClick={() => setShowAchievements(true)} />
                                 {navItems.map(item => (
                                     <NavLink
                                         key={item.to}
@@ -63,7 +67,13 @@ export default function Layout() {
                                     </NavLink>
                                 ))}
                                 <button
-                                    onClick={actions.toggleTheme}
+                                    onClick={() => {
+                                        actions.toggleTheme();
+                                        const newTheme = theme === 'dark' ? 'light' : 'dark';
+                                        if (newTheme === 'dark') {
+                                            localStorage.setItem('dark_mode_used', 'true');
+                                        }
+                                    }}
                                     className="ml-2 p-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all duration-300 hover:scale-105 active:scale-95"
                                     title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                                 >
@@ -76,6 +86,7 @@ export default function Layout() {
                 <main className="max-w-7xl mx-auto px-4 py-6 relative z-10">
                     <Outlet />
                 </main>
+                <AchievementsPanel isOpen={showAchievements} onClose={() => setShowAchievements(false)} />
             </div>
         </div>
     );

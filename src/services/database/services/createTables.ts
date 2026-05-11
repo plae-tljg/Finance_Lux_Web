@@ -1,4 +1,4 @@
-import { CategoryRepository, BudgetRepository, TransactionRepository, AccountRepository, AccountBalanceRepository, TransferRepository } from '../repositories';
+import { CategoryRepository, BudgetRepository, TransactionRepository, AccountRepository, AccountBalanceRepository, TransferRepository, AchievementRepository } from '../repositories';
 import { checkIfDataExists } from './checkTables';
 import { type Database } from 'sql.js';
 import DatabaseService from '../DatabaseService';
@@ -9,7 +9,8 @@ const repositories = [
     AccountBalanceRepository,
     BudgetRepository,
     TransactionRepository,
-    TransferRepository
+    TransferRepository,
+    AchievementRepository
 ]
 
 export const createTables = async (_db: Database, insertSampleData: boolean = false) => {
@@ -18,7 +19,11 @@ export const createTables = async (_db: Database, insertSampleData: boolean = fa
         const repository = new RepositoryClass(dbService);
         await repository.createTable();
         if (insertSampleData) {
-            await repository.insertSampleData();
+            if (RepositoryClass === AchievementRepository) {
+                await repository.insertInitialData();
+            } else if (repository.insertSampleData) {
+                await repository.insertSampleData();
+            }
         }
     }
 }
