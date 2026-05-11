@@ -32,9 +32,11 @@ export default function Reports() {
     const pieExpenseRef = useRef<HTMLCanvasElement>(null);
     const pieIncomeRef = useRef<HTMLCanvasElement>(null);
     const barAccountRef = useRef<HTMLCanvasElement>(null);
+    const lineTrendRef = useRef<HTMLCanvasElement>(null);
     const pieExpenseInstance = useRef<any>(null);
     const pieIncomeInstance = useRef<any>(null);
     const barAccountInstance = useRef<any>(null);
+    const lineTrendInstance = useRef<any>(null);
 
     const currentMonthTransactions = useMemo(() =>
         transactions.filter((t: Transaction) => t.date.startsWith(selectedMonth)),
@@ -113,6 +115,22 @@ export default function Reports() {
       accountSummary,
     }), [selectedMonth, income, expense, currentMonthTransactions, categories, accounts, categorySummary, accountSummary]);
 
+    const monthlyTrend = useMemo(() => {
+      const months: string[] = [];
+      const incomeData: number[] = [];
+      const expenseData: number[] = [];
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthStr = d.toISOString().slice(0, 7);
+        months.push(monthStr);
+        const monthTransactions = transactions.filter((t: Transaction) => t.date.startsWith(monthStr));
+        incomeData.push(monthTransactions.filter((t: Transaction) => t.type === 'income').reduce((sum: number, t: Transaction) => sum + t.amount, 0));
+        expenseData.push(monthTransactions.filter((t: Transaction) => t.type === 'expense').reduce((sum: number, t: Transaction) => sum + t.amount, 0));
+      }
+      return { months, incomeData, expenseData };
+    }, [transactions]);
+
     const handleExportCSV = () => {
       ExportService.exportToCSV(reportData, `financial-report-${selectedMonth}`);
     };
@@ -134,6 +152,7 @@ export default function Reports() {
         if (pieExpenseInstance.current) pieExpenseInstance.current.destroy();
         if (pieIncomeInstance.current) pieIncomeInstance.current.destroy();
         if (barAccountInstance.current) barAccountInstance.current.destroy();
+        if (lineTrendInstance.current) lineTrendInstance.current.destroy();
 
         const pieColors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#10b981', '#06b6d4', '#84cc16', '#f43f5e'];
 
@@ -212,12 +231,57 @@ export default function Reports() {
             });
         }
 
+        if (lineTrendRef.current) {
+            lineTrendInstance.current = new window.Chart(lineTrendRef.current, {
+                type: 'line',
+                data: {
+                    labels: monthlyTrend.months.map(m => m.slice(5)),
+                    datasets: [
+                        {
+                            label: 'Income',
+                            data: monthlyTrend.incomeData,
+                            borderColor: '#22c55e',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                        },
+                        {
+                            label: 'Expense',
+                            data: monthlyTrend.expenseData,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor } },
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor },
+                        },
+                        y: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor },
+                        },
+                    },
+                },
+            });
+        }
+
         return () => {
             if (pieExpenseInstance.current) pieExpenseInstance.current.destroy();
             if (pieIncomeInstance.current) pieIncomeInstance.current.destroy();
             if (barAccountInstance.current) barAccountInstance.current.destroy();
+            if (lineTrendInstance.current) lineTrendInstance.current.destroy();
         };
-    }, [expenseCategories, incomeCategories, accountSummary, theme]);
+    }, [expenseCategories, incomeCategories, accountSummary, monthlyTrend, theme]);
 
     return (
         <div className="space-y-6">
@@ -277,6 +341,13 @@ export default function Reports() {
                     <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${income - expense >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
                         ¥{(income - expense).toLocaleString()}
                     </div>
+                </div>
+            </div>
+
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Income vs Expense Trend (Last 6 Months)</h3>
+                <div className="h-64">
+                    <canvas ref={lineTrendRef} />
                 </div>
             </div>
 
