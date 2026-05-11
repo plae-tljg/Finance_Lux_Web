@@ -7,6 +7,7 @@ import { AccountRepository } from '../services/database/repositories/AccountRepo
 import { AccountBalanceRepository } from '../services/database/repositories/AccountBalanceRepository';
 import { TransferRepository } from '../services/database/repositories/TransferRepository';
 import { AchievementRepository } from '../services/database/repositories/AchievementRepository';
+import { CheckInRepository } from '../services/database/repositories/CheckInRepository';
 import type { Category } from '../services/database/schemas/Category';
 import type { Budget } from '../services/database/schemas/Budget';
 import type { Transaction } from '../services/database/schemas/Transaction';
@@ -14,6 +15,7 @@ import type { Account } from '../services/database/schemas/Account';
 import type { AccountBalance } from '../services/database/schemas/AccountBalance';
 import type { Transfer } from '../services/database/schemas/Transfer';
 import type { Achievement } from '../services/database/schemas/Achievement';
+import type { CheckIn } from '../services/database/schemas/CheckIn';
 
 interface Repositories {
     categoryRepo: CategoryRepository | null;
@@ -23,6 +25,7 @@ interface Repositories {
     accountBalanceRepo: AccountBalanceRepository | null;
     transferRepo: TransferRepository | null;
     achievementRepo: AchievementRepository | null;
+    checkInRepo: CheckInRepository | null;
 }
 
 interface RepositoryContextValue extends Repositories {
@@ -44,6 +47,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
                 accountBalanceRepo: null,
                 transferRepo: null,
                 achievementRepo: null,
+                checkInRepo: null,
             };
         }
 
@@ -55,6 +59,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
             accountBalanceRepo: new AccountBalanceRepository(dbService),
             transferRepo: new TransferRepository(dbService),
             achievementRepo: new AchievementRepository(dbService),
+            checkInRepo: new CheckInRepository(dbService),
         };
     }, [dbService]);
 
@@ -134,4 +139,12 @@ export function useAchievementRepository(): AchievementRepository | null {
     return achievementRepo;
 }
 
-export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, Achievement };
+export function useCheckInRepository(): CheckInRepository | null {
+    const { checkInRepo, isReady } = useRepositories();
+    if (!isReady || !checkInRepo) {
+        return null;
+    }
+    return checkInRepo;
+}
+
+export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, Achievement, CheckIn };

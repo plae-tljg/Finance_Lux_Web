@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useRef } from 'react';
 import { useAppState, useAppDispatch } from '../contexts/AppStateContext';
+import CheckInCard from '../components/checkin/CheckInCard';
 
 declare global {
     interface Window {
@@ -204,27 +205,34 @@ export default function Dashboard() {
                 </select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Income</div>
-                    <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">
-                        ¥{income.toLocaleString()}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Income</div>
+                            <div class_builtin className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">
+                                ¥{income.toLocaleString()}
+                            </div>
+                            <div className="mt-2 h-1 bg-gradient-to-r from-green-500/50 to-green-500 rounded-full" />
+                        </div>
+                        <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Expense</div>
+                            <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">
+                                ¥{expense.toLocaleString()}
+                            </div>
+                            <div className="mt-2 h-1 bg-gradient-to-r from-red-500/50 to-red-500 rounded-full" />
+                        </div>
+                        <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Balance</div>
+                            <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${balance >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
+                                ¥{balance.toLocaleString()}
+                            </div>
+                            <div className={`mt-2 h-1 bg-gradient-to-r rounded-full ${balance >= 0 ? 'from-blue-500/50 to-blue-500' : 'from-red-500/50 to-red-500'}`} />
+                        </div>
                     </div>
-                    <div className="mt-2 h-1 bg-gradient-to-r from-green-500/50 to-green-500 rounded-full" />
                 </div>
-                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Expense</div>
-                    <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">
-                        ¥{expense.toLocaleString()}
-                    </div>
-                    <div className="mt-2 h-1 bg-gradient-to-r from-red-500/50 to-red-500 rounded-full" />
-                </div>
-                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Balance</div>
-                    <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${balance >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
-                        ¥{balance.toLocaleString()}
-                    </div>
-                    <div className={`mt-2 h-1 bg-gradient-to-r rounded-full ${balance >= 0 ? 'from-blue-500/50 to-blue-500' : 'from-red-500/50 to-red-500'}`} />
+                <div>
+                    <CheckInCard />
                 </div>
             </div>
 

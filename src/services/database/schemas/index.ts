@@ -4,6 +4,7 @@ export type { Budget } from './Budget';
 export type { Account } from './Account';
 export type { AccountBalance } from './AccountBalance';
 export type { Achievement, AchievementCategory } from './Achievement';
+export type { CheckIn } from './CheckIn';
 
 import { DEFAULT_CATEGORIES, CategoryQueries, CATEGORY_INDEXES } from './Category';
 import { SAMPLE_TRANSACTIONS, TransactionQueries, TRANSACTION_INDEXES } from './Transaction';
@@ -11,6 +12,7 @@ import { SAMPLE_BUDGETS, BudgetQueries, BUDGET_INDEXES } from './Budget';
 import { DEFAULT_ACCOUNTS, AccountQueries, ACCOUNT_INDEXES } from './Account';
 import { SAMPLE_ACCOUNT_BALANCES, AccountBalanceQueries, ACCOUNT_BALANCE_INDEXES } from './AccountBalance';
 import { AchievementQueries, ACHIEVEMENT_INDEXES } from './Achievement';
+import { CheckInQueries, CHECKIN_INDEXES } from './CheckIn';
 
 export const SCHEMA_VERSIONS = {
   v1: '1.0.0',
@@ -24,6 +26,7 @@ export const SCHEMAS = {
   budgets: BudgetQueries.CREATE_TABLE,
   transactions: TransactionQueries.CREATE_TABLE,
   achievements: AchievementQueries.CREATE_TABLE,
+  checkins: CheckInQueries.CREATE_TABLE,
 };
 
 export const SCHEMAS_SAMPLE_DATA = {
@@ -45,4 +48,5 @@ export const SCHEMAS_INDEXES = [
   ...TRANSACTION_INDEXES,
   ...BUDGET_INDEXES,
   ...ACHIEVEMENT_INDEXES,
+  ...CHECKIN_INDEXES,
 ]
