@@ -60,10 +60,16 @@
 ## 接下来的目标
 
 ### 创意 Luxury 方向
-- [ ] 动态粒子/光晕背景效果
-- [ ] 精致的加载动画
-- [ ] 开机欢迎动画
-- [ ] 隐藏的交互彩蛋
+- [x] 动态粒子/光晕背景效果
+- [x] 精致的加载动画
+- [x] 开机欢迎动画
+- [x] 隐藏的交互彩蛋
+
+### Effects 系统已集成 ✅
+- [x] ParticleBackground 动态粒子背景（玻璃态效果下）
+- [x] WelcomeAnimation 开机欢迎动画（首次访问显示）
+- [x] EasterEggs 彩蛋系统（Ctrl+Shift+L, Ctrl+Shift+E 等快捷键）
+- [x] LuxurySpinner/LuxurySkeleton 精致加载动画
 
 ### 其他可能方向
 - [ ] 账户间转账功能

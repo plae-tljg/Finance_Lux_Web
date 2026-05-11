@@ -1,5 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppStateContext';
+import { ParticleBackground, EasterEggs } from '../effects';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '');
 
@@ -30,6 +31,9 @@ export default function Layout() {
             }}
         >
             {theme === 'dark' && <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pointer-events-none" />}
+
+            <ParticleBackground />
+            <EasterEggs />
 
             <div className={`min-h-screen ${theme === 'dark' ? 'bg-black/30' : ''}`}>
                 <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg border-b border-white/20 dark:border-gray-700/30 sticky top-0 z-50 transition-all duration-300">

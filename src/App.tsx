@@ -1,6 +1,8 @@
+import { useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { DatabaseProvider, RepositoryProvider, AppStateProvider } from './contexts';
 import { ErrorBoundary } from './components/ui';
+import { WelcomeAnimation } from './components/effects';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
@@ -13,12 +15,23 @@ import Debugger from './pages/Debugger';
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '/');
 
 function App() {
+    const [showWelcome, setShowWelcome] = useState(() => {
+        const hasVisited = sessionStorage.getItem('hasVisitedFinanceApp');
+        return !hasVisited;
+    });
+
+    const handleWelcomeComplete = useCallback(() => {
+        sessionStorage.setItem('hasVisitedFinanceApp', 'true');
+        setShowWelcome(false);
+    }, []);
+
     return (
         <ErrorBoundary>
             <DatabaseProvider>
                 <RepositoryProvider>
                     <AppStateProvider>
                         <BrowserRouter basename={BASE_PATH}>
+                            {showWelcome && <WelcomeAnimation onComplete={handleWelcomeComplete} />}
                             <Routes>
                                 <Route path="/" element={<Layout />}>
                                     <Route index element={<Dashboard />} />
