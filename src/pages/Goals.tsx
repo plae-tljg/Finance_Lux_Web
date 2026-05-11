@@ -82,12 +82,20 @@ export default function Goals() {
                     { label: '已完成', value: goals.filter(g => g.status === 'completed').length, color: 'green' },
                     { label: '总目标', value: `¥${goals.filter(g => g.status === 'active').reduce((sum, g) => sum + g.targetAmount, 0).toLocaleString()}`, color: 'blue' },
                     { label: '已存', value: `¥${goals.filter(g => g.status === 'active').reduce((sum, g) => sum + g.currentAmount, 0).toLocaleString()}`, color: 'emerald' },
-                ].map((stat, i) => (
-                    <div key={i} className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                        <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{stat.label}</div>
-                        <div className={`text-2xl font-bold text-${stat.color}-500 group-hover:scale-105 transition-transform`}>{stat.value}</div>
-                    </div>
-                ))}
+                ].map((stat, i) => {
+                    const colorClasses = {
+                        purple: 'text-purple-500',
+                        green: 'text-green-500',
+                        blue: 'text-blue-500',
+                        emerald: 'text-emerald-500',
+                    };
+                    return (
+                        <div key={i} className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{stat.label}</div>
+                            <div className={`text-2xl font-bold ${colorClasses[stat.color as keyof typeof colorClasses] || 'text-gray-800'} group-hover:scale-105 transition-transform`}>{stat.value}</div>
+                        </div>
+                    );
+                })}
             </div>
 
             {goals.length === 0 ? (
@@ -107,7 +115,7 @@ export default function Goals() {
                     {goals.map(goal => (
                         <div
                             key={goal.id}
-                            className={`group relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-${goal.priority === 'high' ? 'red' : goal.priority === 'medium' ? 'yellow' : 'blue'}-400/30 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 ${goal.status === 'completed' ? 'ring-2 ring-green-500/50' : ''}`}
+                            className={`group relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 ${goal.status === 'completed' ? 'ring-2 ring-green-500/50' : ''} ${goal.priority === 'high' ? 'border-red-400/30 border' : goal.priority === 'medium' ? 'border-yellow-400/30 border' : 'border-blue-400/30 border'}`}
                         >
                             {goal.status === 'completed' && (
                                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-center py-1 text-sm font-medium z-10">

@@ -249,3 +249,10 @@
 - 是否正常进度判断（基于时间和金额进度比较）
 - 存入资金功能（自动更新进度）
 - 自动完成判定（currentAmount >= targetAmount）
+
+### Bug 修复
+- [x] Goals.tsx: 修复 Tailwind 动态优先级边框 class（border-red-400/30 border 等）
+- [x] Goals.tsx: 修复 stats 卡片动态颜色 class（text-purple-500 等）
+
+### 代码清理
+- [x] Goals.tsx: 格式化缩进（4空格统一为 4 空格）
