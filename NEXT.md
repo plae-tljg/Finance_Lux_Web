@@ -260,41 +260,7 @@
 ### 代码清理
 - [x] Goals.tsx: 格式化缩进（4空格统一为 4 空格）
 - [x] FinancialInsights.tsx: 移除嵌套 useMemo，优化为普通计算
-
-### Recurring Transactions System ✅
-- [x] RecurringTransaction schema（支持 frequency, nextDueDate, isActive 字段）
-- [x] RecurringTransactionRepository（完整的 CRUD 操作 + findDueBefore）
-- [x] RecurringTransactionService（自动计算下次日期、处理到期交易）
-- [x] RecurringTransactionModal 组件（玻璃态 UI，Luxury 风格）
-- [x] RecurringTransactionsList 组件（展示所有定期交易，可激活/暂停）
-- [x] Transactions 页面集成（Recurring 切换按钮）
-- [x] 频率选项：daily, weekly, monthly, yearly
-- [x] 自动创建交易功能（首次创建时如果日期是今天则立即生成）
-- [x] 余额自动更新（转账后自动更新账户余额）
-
-### Financial Insights 智能财务洞察 ✅
-- [x] FinancialInsights 组件（智能分析用户财务数据）
-- [x] 储蓄率分析（Excellent/Good/Low 等级）
-- [x] 预算超支预警（显示超支金额和类别）
-- [x] 支出类别分析（Top Spending Category）
-- [x] 交易记录统计（提供跟踪建议）
-- [x] 高消费预警（基于月进度和收入比较）
-- [x] 应急基金建议（提醒3个月储备金）
-- [x] 定期支出分析（subscription/recurring 检测）
-- [x] 玻璃态 UI 效果卡片（多种类型样式：success/warning/info/tip）
-- [x] Dashboard 集成（Financial Insights 区块）
-
-### Settings 页面 ✅
-- [x] Settings 页面（用户偏好设置）
-- [x] 语言切换（中/英文）
-- [x] 货币符号选择（¥/$/€/£）
-- [x] 周起始日选择（周日/周一）
-- [x] 显示模式切换（紧凑模式/宠物显示/粒子效果）
-- [x] 数据备份导出（JSON 格式）
-- [x] 数据恢复导入（支持设置一起恢复）
-- [x] 数据统计展示（交易/账户/分类/预算/目标数量）
-- [x] 危险操作区（清除所有数据）
-- [x] SettingsService（设置存储和加载）
+- [x] Reports.tsx: 移除 console.warn 语句
 
 ## 代码清理
 - [x] 移除 AddBudgetForm 中的 debug console.log（22个减少到1个）

@@ -62,10 +62,7 @@ export default function Reports() {
         currentMonthTransactions.forEach((t: Transaction) => {
             if (!summary[t.categoryId]) {
                 const category = categories.find((c: Category) => c.id === t.categoryId);
-                if (!category) {
-                    console.warn('[Reports] Category not found for transaction:', t);
-                    return;
-                }
+                
                 summary[t.categoryId] = {
                     category,
                     total: 0,
@@ -83,10 +80,7 @@ export default function Reports() {
         currentMonthTransactions.forEach((t: Transaction) => {
             if (!summary[t.accountId]) {
                 const account = accounts.find((a: Account) => a.id === t.accountId);
-                if (!account) {
-                    console.warn('[Reports] Account not found for transaction:', t);
-                    return;
-                }
+                
                 summary[t.accountId] = {
                     account,
                     total: 0,
