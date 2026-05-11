@@ -210,7 +210,7 @@ export default function Dashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
                             <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Income</div>
-                            <div class_builtin className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">
+                            <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">
                                 ¥{income.toLocaleString()}
                             </div>
                             <div className="mt-2 h-1 bg-gradient-to-r from-green-500/50 to-green-500 rounded-full" />

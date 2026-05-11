@@ -122,6 +122,9 @@
 4. 主题切换支持
 5. 操作按钮悬浮显示（group-hover 模式）
 
+### Bug 修复
+- [x] Dashboard.tsx 修复 class_builtin 语法错误
+
 ### 账户间转账功能 ✅
 - [x] Transfer schema（支持 from/to account, amount, description, date）
 - [x] TransferRepository（完整的 CRUD 操作）
