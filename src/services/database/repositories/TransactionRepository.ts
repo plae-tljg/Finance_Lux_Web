@@ -56,7 +56,9 @@ export class TransactionRepository implements BaseRepository<Transaction> {
         data.budgetId,
         data.description,
         data.date,
-        data.type
+        data.type,
+        data.mood || null,
+        data.tags || null
       ]
     );
 
@@ -116,6 +118,8 @@ export class TransactionRepository implements BaseRepository<Transaction> {
         data.description,
         data.date,
         data.type,
+        data.mood,
+        data.tags,
         id
       ]
     );

@@ -34,6 +34,8 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
             description: initialData.description || '',
             date: initialData.date.split('T')[0],
             type: initialData.type,
+            mood: initialData.mood || '',
+            tags: initialData.tags || '',
         } : {
             amount: 0,
             categoryId: 0,
@@ -42,6 +44,8 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
             description: '',
             date: new Date().toISOString().split('T')[0],
             type: 'expense',
+            mood: '',
+            tags: '',
         }
     );
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -157,6 +161,8 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
                     description: '',
                     date: new Date().toISOString().split('T')[0],
                     type: 'expense',
+                    mood: '',
+                    tags: '',
                 });
                 console.log('[AddTransactionForm] Form reset complete');
             }
@@ -231,6 +237,33 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
                 options={budgets.map(b => ({ value: b.id, label: b.name }))}
                 placeholder="Select budget"
                 required
+            />
+
+            <div>
+                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Mood</label>
+                <div className="flex gap-2 flex-wrap">
+                    {['', '😊', '😄', '😐', '😢', '😡', '🎉', '😍', '🤔'].map(mood => (
+                        <button
+                            key={mood}
+                            type="button"
+                            onClick={() => handleChange('mood', mood)}
+                            className={`w-10 h-10 rounded-lg text-xl flex items-center justify-center transition-all ${
+                                formData.mood === mood
+                                    ? 'bg-blue-500 scale-110 shadow-lg'
+                                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
+                            }`}
+                        >
+                            {mood || '-'}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            <Input
+                label="Tags"
+                value={formData.tags || ''}
+                onChange={e => handleChange('tags', e.target.value)}
+                placeholder="e.g., work, daily, important (comma separated)"
             />
 
             <Input

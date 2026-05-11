@@ -29,6 +29,8 @@ export default function Transactions() {
     const [dateTo, setDateTo] = useState<string>('');
     const [amountMin, setAmountMin] = useState<string>('');
     const [amountMax, setAmountMax] = useState<string>('');
+    const [filterMood, setFilterMood] = useState<string>('all');
+    const [filterTag, setFilterTag] = useState<string>('');
 
     // Quick date presets
     const [datePreset, setDatePreset] = useState<string>('all');
@@ -108,6 +110,8 @@ export default function Transactions() {
         setAmountMin('');
         setAmountMax('');
         setDatePreset('all');
+        setFilterMood('all');
+        setFilterTag('');
     };
 
     const hasActiveFilters = searchText || filterType !== 'all' || filterCategory !== 'all' ||
@@ -136,6 +140,12 @@ export default function Transactions() {
             // Amount range filter
             if (amountMin && t.amount < parseFloat(amountMin)) return false;
             if (amountMax && t.amount > parseFloat(amountMax)) return false;
+
+            // Mood filter
+            if (filterMood !== 'all' && t.mood !== filterMood) return false;
+
+            // Tag filter
+            if (filterTag && (!t.tags || !t.tags.toLowerCase().includes(filterTag.toLowerCase()))) return false;
 
             return true;
         });
@@ -349,6 +359,34 @@ export default function Transactions() {
                                 className="px-4 py-2 border rounded-lg w-32"
                             />
                         </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-1">Mood</label>
+                            <select
+                                value={filterMood}
+                                onChange={e => setFilterMood(e.target.value)}
+                                className="px-4 py-2 border rounded-lg bg-white"
+                            >
+                                <option value="all">All Moods</option>
+                                <option value="😊">😊</option>
+                                <option value="😄">😄</option>
+                                <option value="😐">😐</option>
+                                <option value="😢">😢</option>
+                                <option value="😡">😡</option>
+                                <option value="🎉">🎉</option>
+                                <option value="😍">😍</option>
+                                <option value="🤔">🤔</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-1">Tag</label>
+                            <input
+                                type="text"
+                                placeholder="Filter by tag..."
+                                value={filterTag}
+                                onChange={e => setFilterTag(e.target.value)}
+                                className="px-4 py-2 border rounded-lg w-40"
+                            />
+                        </div>
                     </div>
                 )}
             </div>
@@ -406,6 +444,28 @@ export default function Transactions() {
                                 <span className={`font-semibold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
                                     {t.type === 'income' ? '+' : '-'}¥{Number(value).toLocaleString()}
                                 </span>
+                            );
+                        }
+                    },
+                    {
+                        key: 'mood',
+                        header: 'Mood',
+                        render: (value) => value ? String(value) : '-'
+                    },
+                    {
+                        key: 'tags',
+                        header: 'Tags',
+                        render: (value) => {
+                            if (!value) return '-';
+                            const tags = String(value).split(',').map(t => t.trim()).filter(Boolean);
+                            return (
+                                <div className="flex gap-1 flex-wrap">
+                                    {tags.map((tag, idx) => (
+                                        <span key={idx} className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded-full">
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
                             );
                         }
                     }
