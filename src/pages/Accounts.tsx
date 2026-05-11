@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useAppState, useAppDispatch, useAccountRepository } from '../contexts';
 import { Modal } from '../components/ui/Modal';
 import { AddAccountForm } from '../components/forms/AddAccountForm';
@@ -6,13 +6,22 @@ import { AccountBalanceModal } from '../components/forms/AccountBalanceModal';
 import type { Account } from '../services/database/schemas/Account';
 import type { AccountBalance } from '../services/database/schemas/AccountBalance';
 
+declare global {
+    interface Window {
+        Chart: any;
+    }
+}
+
 type FilterType = 'all' | 'bank' | 'cash' | 'digital' | 'credit';
 
 export default function Accounts() {
     const { state } = useAppState();
     const dispatch = useAppDispatch();
     const accountRepo = useAccountRepository();
-    const { accounts, accountBalances } = state;
+    const { accounts, accountBalances, theme } = state;
+
+    const pieChartRef = useRef<HTMLCanvasElement>(null);
+    const pieChartInstance = useRef<any>(null);
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingAccount, setEditingAccount] = useState<Account | null>(null);
@@ -99,63 +108,138 @@ export default function Accounts() {
         };
     }, [filteredAccounts, accounts]);
 
+    const chartData = useMemo(() => {
+        return filteredAccounts
+            .filter((a: Account) => a.isActive)
+            .map((a: Account) => ({
+                name: a.name,
+                icon: a.icon,
+                balance: getLatestBalance(a.id),
+                type: a.type,
+            }))
+            .sort((x, y) => y.balance - x.balance)
+            .slice(0, 8);
+    }, [filteredAccounts, accountBalances]);
+
+    useEffect(() => {
+        if (!window.Chart || !pieChartRef.current) return;
+
+        const textColor = theme === 'dark' ? '#e5e7eb' : '#374151';
+
+        if (pieChartInstance.current) pieChartInstance.current.destroy();
+
+        const pieColors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#10b981', '#06b6d4', '#84cc16', '#f43f5e'];
+        pieChartInstance.current = new window.Chart(pieChartRef.current, {
+            type: 'doughnut',
+            data: {
+                labels: chartData.map(d => d.name),
+                datasets: [{
+                    data: chartData.map(d => Math.abs(d.balance)),
+                    backgroundColor: chartData.map((_, i) => pieColors[i % pieColors.length]),
+                    borderWidth: 0,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: textColor },
+                    },
+                },
+            },
+        });
+
+        return () => {
+            if (pieChartInstance.current) pieChartInstance.current.destroy();
+        };
+    }, [chartData, theme]);
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">Accounts</h2>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Accounts</h2>
                 <button
                     onClick={() => setShowAddModal(true)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                 >
                     + Add Account
                 </button>
             </div>
 
-            {/* Stats Summary */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Total Accounts</div>
-                    <div className="text-2xl font-bold">{stats.total}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Accounts</div>
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white group-hover:scale-105 transition-transform">{stats.total}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Active</div>
-                    <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Active</div>
+                    <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">{stats.active}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Inactive</div>
-                    <div className="text-2xl font-bold text-gray-400">{stats.inactive}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Inactive</div>
+                    <div className="text-2xl font-bold text-gray-400 group-hover:scale-105 transition-transform">{stats.inactive}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Total Balance</div>
-                    <div className="text-2xl font-bold text-blue-600">¥{stats.totalBalance.toLocaleString()}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Balance</div>
+                    <div className="text-2xl font-bold text-blue-500 group-hover:scale-105 transition-transform">¥{stats.totalBalance.toLocaleString()}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Credit Balance</div>
-                    <div className={`text-2xl font-bold ${stats.creditBalance < 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Credit Balance</div>
+                    <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${stats.creditBalance < 0 ? 'text-red-500' : 'text-gray-600 dark:text-gray-400'}`}>
                         ¥{stats.creditBalance.toLocaleString()}
                     </div>
                 </div>
             </div>
 
-            {/* Search and Filters */}
-            <div className="bg-white rounded-xl shadow p-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Account Balances</h3>
+                    <div className="h-64">
+                        <canvas ref={pieChartRef} />
+                    </div>
+                </div>
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Balance by Type</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        {['bank', 'cash', 'digital', 'credit'].map(type => {
+                            const typeAccounts = filteredAccounts.filter((a: Account) => a.isActive && a.type === type);
+                            const total = typeAccounts.reduce((sum, a) => sum + getLatestBalance(a.id), 0);
+                            return (
+                                <div key={type} className="bg-gray-100/50 dark:bg-gray-700/50 rounded-xl p-4 group hover:bg-gray-200/50 dark:hover:bg-gray-600/50 transition-colors">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-2xl group-hover:scale-110 transition-transform">{typeIcons[type]}</span>
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">{typeLabels[type]}</span>
+                                    </div>
+                                    <div className={`text-xl font-bold ${total < 0 ? 'text-red-500' : 'text-gray-800 dark:text-white'}`}>
+                                        ¥{total.toLocaleString()}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5">
                 <div className="flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-64">
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Search</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Search</label>
                         <input
                             type="text"
                             placeholder="Search account name..."
                             value={searchText}
                             onChange={e => setSearchText(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Type</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Type</label>
                         <select
                             value={filterType}
                             onChange={e => setFilterType(e.target.value as FilterType)}
-                            className="px-4 py-2 border rounded-lg bg-white"
+                            className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         >
                             <option value="all">All Types</option>
                             <option value="bank">Bank</option>
@@ -169,14 +253,14 @@ export default function Accounts() {
                             type="checkbox"
                             checked={showInactive}
                             onChange={e => setShowInactive(e.target.checked)}
-                            className="w-4 h-4"
+                            className="w-4 h-4 rounded"
                         />
-                        <span className="text-sm">Show inactive</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Show inactive</span>
                     </label>
                     {hasActiveFilters && (
                         <button
                             onClick={clearFilters}
-                            className="px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg border border-red-200"
+                            className="px-4 py-2 text-red-500 hover:bg-red-50/50 dark:hover:bg-red-900/20 rounded-xl border border-red-200/50 dark:border-red-700/50 transition-all"
                         >
                             Clear Filters
                         </button>
@@ -184,34 +268,33 @@ export default function Accounts() {
                 </div>
             </div>
 
-            {/* Accounts by Type */}
             {Object.keys(groupedAccounts).length === 0 ? (
-                <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-12 text-center text-gray-500 dark:text-gray-400">
                     {hasActiveFilters ? 'No accounts match your filters' : 'No accounts yet'}
                 </div>
             ) : (
                 Object.entries(groupedAccounts).map(([type, typeAccounts]) => (
-                    <div key={type} className="bg-white rounded-xl shadow overflow-hidden">
-                        <div className="px-6 py-4 bg-gray-50 border-b flex items-center gap-2">
+                    <div key={type} className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 overflow-hidden">
+                        <div className="px-6 py-4 bg-gray-100/50 dark:bg-gray-700/50 border-b border-gray-200/30 dark:border-gray-700/30 flex items-center gap-2">
                             <span className="text-xl">{typeIcons[type]}</span>
-                            <h3 className="font-semibold text-gray-700">{typeLabels[type]}</h3>
-                            <span className="text-sm text-gray-500">({typeAccounts.length})</span>
+                            <h3 className="font-semibold text-gray-700 dark:text-gray-200">{typeLabels[type]}</h3>
+                            <span className="text-sm text-gray-500 dark:text-gray-400">({typeAccounts.length})</span>
                         </div>
-                        <div className="divide-y">
+                        <div className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
                             {typeAccounts.map((account: Account) => (
-                                <div key={account.id} className={`px-6 py-4 hover:bg-gray-50 ${!account.isActive ? 'opacity-50' : ''}`}>
+                                <div key={account.id} className={`px-6 py-4 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors group ${!account.isActive ? 'opacity-50' : ''}`}>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <span className="text-2xl">{account.icon}</span>
+                                            <span className="text-2xl group-hover:scale-110 transition-transform">{account.icon}</span>
                                             <div>
-                                                <div className="font-medium">{account.name}</div>
-                                                <div className="text-sm text-gray-500">
+                                                <div className="font-medium text-gray-800 dark:text-gray-200">{account.name}</div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-400">
                                                     {account.currency} • {account.isActive ? 'Active' : 'Inactive'}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            <div className={`text-xl font-bold ${getLatestBalance(account.id) < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                                            <div className={`text-xl font-bold ${getLatestBalance(account.id) < 0 ? 'text-red-500' : 'text-green-600'}`}>
                                                 ¥{getLatestBalance(account.id).toLocaleString()}
                                             </div>
                                             <button
@@ -219,7 +302,7 @@ export default function Accounts() {
                                                     setBalanceAccount(account);
                                                     setShowBalanceModal(true);
                                                 }}
-                                                className="px-3 py-1 text-sm bg-green-100 text-green-700 hover:bg-green-200 rounded"
+                                                className="px-3 py-1 text-sm bg-green-100/50 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200/50 dark:hover:bg-green-800/40 rounded-lg transition-colors"
                                             >
                                                 Balance
                                             </button>
@@ -228,7 +311,7 @@ export default function Accounts() {
                                                     setEditingAccount(account);
                                                     setShowEditModal(true);
                                                 }}
-                                                className="p-2 text-blue-500 hover:bg-blue-50 rounded"
+                                                className="p-2 text-blue-500 hover:bg-blue-50/50 dark:hover:bg-blue-900/30 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                                             >
                                                 ✏️
                                             </button>
@@ -245,7 +328,7 @@ export default function Accounts() {
                                                         }
                                                     }
                                                 }}
-                                                className="p-2 text-red-500 hover:bg-red-50 rounded"
+                                                className="p-2 text-red-500 hover:bg-red-50/50 dark:hover:bg-red-900/30 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                                             >
                                                 🗑️
                                             </button>

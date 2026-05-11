@@ -1,10 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useAppState, useAppDispatch, useBudgetRepository } from '../contexts';
 import { Modal } from '../components/ui/Modal';
 import { AddBudgetForm } from '../components/forms/AddBudgetForm';
 import type { Budget } from '../services/database/schemas/Budget';
 import type { Category } from '../services/database/schemas/Category';
 import type { Transaction } from '../services/database/schemas/Transaction';
+
+declare global {
+    interface Window {
+        Chart: any;
+    }
+}
 
 type SortField = 'name' | 'amount' | 'spent' | 'percentage';
 type SortDirection = 'asc' | 'desc';
@@ -13,7 +19,12 @@ export default function Budgets() {
     const { state } = useAppState();
     const dispatch = useAppDispatch();
     const budgetRepo = useBudgetRepository();
-    const { budgets, categories, transactions, selectedMonth } = state;
+    const { budgets, categories, transactions, selectedMonth, theme } = state;
+
+    const pieChartRef = useRef<HTMLCanvasElement>(null);
+    const barChartRef = useRef<HTMLCanvasElement>(null);
+    const pieChartInstance = useRef<any>(null);
+    const barChartInstance = useRef<any>(null);
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
@@ -112,57 +123,160 @@ export default function Budgets() {
         return { totalBudgeted, totalSpent, exceededCount, count: budgetData.length };
     }, [budgetData]);
 
+    const chartData = useMemo(() => {
+        return budgetData.slice(0, 8).map(b => ({
+            name: b.name || 'Budget',
+            icon: b.category?.icon || '📊',
+            budgeted: b.amount,
+            spent: b.spent,
+            isExceeded: b.isExceeded,
+        }));
+    }, [budgetData]);
+
+    useEffect(() => {
+        if (!window.Chart || !pieChartRef.current || !barChartRef.current) return;
+
+        const textColor = theme === 'dark' ? '#e5e7eb' : '#374151';
+        const gridColor = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+
+        if (pieChartInstance.current) pieChartInstance.current.destroy();
+        if (barChartInstance.current) barChartInstance.current.destroy();
+
+        const pieColors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#10b981', '#06b6d4', '#84cc16', '#f43f5e'];
+        pieChartInstance.current = new window.Chart(pieChartRef.current, {
+            type: 'doughnut',
+            data: {
+                labels: chartData.map(d => d.name),
+                datasets: [{
+                    data: chartData.map(d => d.budgeted),
+                    backgroundColor: chartData.map((_, i) => pieColors[i % pieColors.length]),
+                    borderWidth: 0,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: textColor },
+                    },
+                },
+            },
+        });
+
+        barChartInstance.current = new window.Chart(barChartRef.current, {
+            type: 'bar',
+            data: {
+                labels: chartData.map(d => d.name),
+                datasets: [
+                    {
+                        label: 'Budgeted',
+                        data: chartData.map(d => d.budgeted),
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                    },
+                    {
+                        label: 'Spent',
+                        data: chartData.map(d => d.spent),
+                        backgroundColor: chartData.map(d => d.isExceeded ? 'rgba(239, 68, 68, 0.6)' : 'rgba(34, 197, 94, 0.6)'),
+                        borderColor: chartData.map(d => d.isExceeded ? '#ef4444' : '#22c55e'),
+                        borderWidth: 1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: textColor } },
+                },
+                scales: {
+                    x: {
+                        ticks: { color: textColor },
+                        grid: { color: gridColor },
+                    },
+                    y: {
+                        ticks: { color: textColor },
+                        grid: { color: gridColor },
+                    },
+                },
+            },
+        });
+
+        return () => {
+            if (pieChartInstance.current) pieChartInstance.current.destroy();
+            if (barChartInstance.current) barChartInstance.current.destroy();
+        };
+    }, [chartData, theme]);
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">Budgets - {selectedMonth}</h2>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Budgets - {selectedMonth}</h2>
                 <button
                     onClick={() => setShowAddModal(true)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                 >
                     + Add Budget
                 </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Total Budgets</div>
-                    <div className="text-2xl font-bold">{stats.count}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Budgets</div>
+                    <div className="text-2xl font-bold text-gray-800 dark:text-white group-hover:scale-105 transition-transform">{stats.count}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Budgeted</div>
-                    <div className="text-2xl font-bold text-blue-600">¥{stats.totalBudgeted.toLocaleString()}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Budgeted</div>
+                    <div className="text-2xl font-bold text-blue-500 group-hover:scale-105 transition-transform">¥{stats.totalBudgeted.toLocaleString()}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Spent</div>
-                    <div className="text-2xl font-bold text-red-600">¥{stats.totalSpent.toLocaleString()}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Spent</div>
+                    <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">¥{stats.totalSpent.toLocaleString()}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-4">
-                    <div className="text-sm text-gray-500">Exceeded</div>
-                    <div className={`text-2xl font-bold ${stats.exceededCount > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                        {stats.exceededCount} budgets
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Exceeded</div>
+                    <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${stats.exceededCount > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                        {stats.exceededCount}
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-4 space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Budget Allocation</h3>
+                    <div className="h-64">
+                        <canvas ref={pieChartRef} />
+                    </div>
+                </div>
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Budget vs Spent</h3>
+                    <div className="h-64">
+                        <canvas ref={barChartRef} />
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 space-y-4">
                 <div className="flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-64">
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Search</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Search</label>
                         <input
                             type="text"
                             placeholder="Search budget name..."
                             value={searchText}
                             onChange={e => setSearchText(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg"
+                            className="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Category</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Category</label>
                         <select
                             value={filterCategory}
                             onChange={e => setFilterCategory(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                            className="px-4 py-2 border rounded-lg bg-white"
+                            className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         >
                             <option value="all">All Categories</option>
                             {categories.map((c: Category) => (
@@ -171,11 +285,11 @@ export default function Budgets() {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 mb-1">Status</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Status</label>
                         <select
                             value={filterStatus}
                             onChange={e => setFilterStatus(e.target.value as 'all' | 'normal' | 'exceeded')}
-                            className="px-4 py-2 border rounded-lg bg-white"
+                            className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         >
                             <option value="all">All Status</option>
                             <option value="normal">Normal</option>
@@ -187,14 +301,14 @@ export default function Budgets() {
                             type="checkbox"
                             checked={showOnlyExceedBudget}
                             onChange={e => setShowOnlyExceedBudget(e.target.checked)}
-                            className="w-4 h-4"
+                            className="w-4 h-4 rounded"
                         />
-                        <span className="text-sm">Show only exceeded</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">Show only exceeded</span>
                     </label>
                     {hasActiveFilters && (
                         <button
                             onClick={clearFilters}
-                            className="px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg border border-red-200"
+                            className="px-4 py-2 text-red-500 hover:bg-red-50/50 dark:hover:bg-red-900/20 rounded-xl border border-red-200/50 dark:border-red-700/50 transition-all"
                         >
                             Clear Filters
                         </button>
@@ -202,68 +316,74 @@ export default function Budgets() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 overflow-hidden">
                 {filteredBudgets.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500">
+                    <div className="p-12 text-center text-gray-500 dark:text-gray-400">
                         {hasActiveFilters ? 'No budgets match your filters' : 'No budgets for this month'}
                     </div>
                 ) : (
                     <table className="w-full">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-100/50 dark:bg-gray-700/50">
                             <tr>
                                 <th
-                                    className="px-6 py-3 text-left text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100"
+                                    className="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-600/50 transition-colors"
                                     onClick={() => toggleSort('name')}
                                 >
                                     Budget{getSortIndicator('name')}
                                 </th>
-                                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600">Category</th>
+                                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300">Category</th>
                                 <th
-                                    className="px-6 py-3 text-right text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100"
+                                    className="px-6 py-3 text-right text-sm font-semibold text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-600/50 transition-colors"
                                     onClick={() => toggleSort('amount')}
                                 >
                                     Budgeted{getSortIndicator('amount')}
                                 </th>
                                 <th
-                                    className="px-6 py-3 text-right text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100"
+                                    className="px-6 py-3 text-right text-sm font-semibold text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-600/50 transition-colors"
                                     onClick={() => toggleSort('spent')}
                                 >
                                     Spent{getSortIndicator('spent')}
                                 </th>
-                                <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600">Remaining</th>
+                                <th className="px-6 py-3 text-right text-sm font-semibold text-gray-600 dark:text-gray-300">Remaining</th>
                                 <th
-                                    className="px-6 py-3 text-center text-sm font-semibold text-gray-600 cursor-pointer hover:bg-gray-100"
+                                    className="px-6 py-3 text-center text-sm font-semibold text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-gray-200/50 dark:hover:bg-gray-600/50 transition-colors"
                                     onClick={() => toggleSort('percentage')}
                                 >
                                     Progress{getSortIndicator('percentage')}
                                 </th>
-                                <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600">Actions</th>
+                                <th className="px-6 py-3 text-center text-sm font-semibold text-gray-600 dark:text-gray-300">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y">
+                        <tbody className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
                             {filteredBudgets.map((budget: typeof budgetData[0]) => (
-                                <tr key={budget.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 font-medium">{budget.name}</td>
+                                <tr key={budget.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors group">
+                                    <td className="px-6 py-4 font-medium text-gray-800 dark:text-gray-200">{budget.name}</td>
                                     <td className="px-6 py-4">
-                                        <span className="flex items-center gap-2">
+                                        <span className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                                             <span>{budget.category?.icon}</span>
                                             <span>{budget.category?.name}</span>
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right">¥{budget.amount.toLocaleString()}</td>
-                                    <td className="px-6 py-4 text-right">¥{budget.spent.toLocaleString()}</td>
-                                    <td className={`px-6 py-4 text-right font-semibold ${budget.remaining >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                    <td className="px-6 py-4 text-right text-gray-800 dark:text-gray-200">¥{budget.amount.toLocaleString()}</td>
+                                    <td className="px-6 py-4 text-right text-gray-800 dark:text-gray-200">¥{budget.spent.toLocaleString()}</td>
+                                    <td className={`px-6 py-4 text-right font-semibold ${budget.remaining >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                                         ¥{budget.remaining.toLocaleString()}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-2">
-                                            <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden max-w-24">
+                                            <div className="flex-1 h-2.5 bg-gray-200/50 dark:bg-gray-700/50 rounded-full overflow-hidden max-w-24 group-hover:shadow-md transition-shadow">
                                                 <div
-                                                    className={`h-full transition-all ${budget.isExceeded ? 'bg-red-500' : budget.percentage > 80 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                                                    className={`h-full rounded-full transition-all duration-500 group-hover:shadow-lg ${
+                                                        budget.isExceeded
+                                                            ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50'
+                                                            : budget.percentage > 80
+                                                                ? 'bg-gradient-to-r from-yellow-500 to-orange-500 shadow-yellow-500/50'
+                                                                : 'bg-gradient-to-r from-green-500 to-emerald-500 shadow-green-500/50'
+                                                    }`}
                                                     style={{ width: `${Math.min(budget.percentage, 100)}%` }}
                                                 />
                                             </div>
-                                            <span className={`text-sm font-medium ${budget.isExceeded ? 'text-red-600' : 'text-gray-500'}`}>
+                                            <span className={`text-sm font-medium ${budget.isExceeded ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
                                                 {budget.percentage.toFixed(0)}%
                                             </span>
                                         </div>
@@ -274,7 +394,7 @@ export default function Budgets() {
                                                 setEditingBudget(budget);
                                                 setShowEditModal(true);
                                             }}
-                                            className="text-blue-500 hover:text-blue-700 mr-3"
+                                            className="text-blue-500 hover:text-blue-700 mr-3 opacity-0 group-hover:opacity-100 transition-opacity"
                                         >
                                             Edit
                                         </button>
@@ -291,7 +411,7 @@ export default function Budgets() {
                                                     }
                                                 }
                                             }}
-                                            className="text-red-500 hover:text-red-700"
+                                            className="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
                                         >
                                             Delete
                                         </button>

@@ -1,8 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { useAppState } from '../contexts/AppStateContext';
 import type { Category } from '../services/database/schemas/Category';
 import type { Account } from '../services/database/schemas/Account';
 import type { Transaction } from '../services/database/schemas/Transaction';
+
+declare global {
+    interface Window {
+        Chart: any;
+    }
+}
 
 interface CategorySummaryItem {
     category: Category;
@@ -18,7 +24,14 @@ interface AccountSummaryItem {
 
 export default function Reports() {
     const { state } = useAppState();
-    const { transactions, categories, accounts, selectedMonth } = state;
+    const { transactions, categories, accounts, selectedMonth, theme } = state;
+
+    const pieExpenseRef = useRef<HTMLCanvasElement>(null);
+    const pieIncomeRef = useRef<HTMLCanvasElement>(null);
+    const barAccountRef = useRef<HTMLCanvasElement>(null);
+    const pieExpenseInstance = useRef<any>(null);
+    const pieIncomeInstance = useRef<any>(null);
+    const barAccountInstance = useRef<any>(null);
 
     const currentMonthTransactions = useMemo(() =>
         transactions.filter((t: Transaction) => t.date.startsWith(selectedMonth)),
@@ -84,109 +97,167 @@ export default function Reports() {
     const expenseCategories = categorySummary.filter(c => c.category?.type === 'expense');
     const incomeCategories = categorySummary.filter(c => c.category?.type === 'income');
 
+    useEffect(() => {
+        if (!window.Chart) return;
+
+        const textColor = theme === 'dark' ? '#e5e7eb' : '#374151';
+        const gridColor = theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+
+        if (pieExpenseInstance.current) pieExpenseInstance.current.destroy();
+        if (pieIncomeInstance.current) pieIncomeInstance.current.destroy();
+        if (barAccountInstance.current) barAccountInstance.current.destroy();
+
+        const pieColors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#10b981', '#06b6d4', '#84cc16', '#f43f5e'];
+
+        if (pieExpenseRef.current && expenseCategories.length > 0) {
+            pieExpenseInstance.current = new window.Chart(pieExpenseRef.current, {
+                type: 'doughnut',
+                data: {
+                    labels: expenseCategories.map(c => c.category?.name || 'Unknown'),
+                    datasets: [{
+                        data: expenseCategories.map(c => c.total),
+                        backgroundColor: expenseCategories.map((_, i) => pieColors[i % pieColors.length]),
+                        borderWidth: 0,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: textColor } },
+                    },
+                },
+            });
+        }
+
+        if (pieIncomeRef.current && incomeCategories.length > 0) {
+            pieIncomeInstance.current = new window.Chart(pieIncomeRef.current, {
+                type: 'doughnut',
+                data: {
+                    labels: incomeCategories.map(c => c.category?.name || 'Unknown'),
+                    datasets: [{
+                        data: incomeCategories.map(c => c.total),
+                        backgroundColor: incomeCategories.map((_, i) => pieColors[i % pieColors.length]),
+                        borderWidth: 0,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { color: textColor } },
+                    },
+                },
+            });
+        }
+
+        if (barAccountRef.current && accountSummary.length > 0) {
+            barAccountInstance.current = new window.Chart(barAccountRef.current, {
+                type: 'bar',
+                data: {
+                    labels: accountSummary.map(a => a.account.name),
+                    datasets: [{
+                        label: 'Transactions',
+                        data: accountSummary.map(a => a.total),
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1,
+                    }],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor } },
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor },
+                        },
+                        y: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor },
+                        },
+                    },
+                },
+            });
+        }
+
+        return () => {
+            if (pieExpenseInstance.current) pieExpenseInstance.current.destroy();
+            if (pieIncomeInstance.current) pieIncomeInstance.current.destroy();
+            if (barAccountInstance.current) barAccountInstance.current.destroy();
+        };
+    }, [expenseCategories, incomeCategories, accountSummary, theme]);
+
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800">Reports - {selectedMonth}</h2>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Reports - {selectedMonth}</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-xl shadow p-6">
-                    <div className="text-sm text-gray-500">Total Income</div>
-                    <div className="text-2xl font-bold text-green-600">¥{income.toLocaleString()}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Income</div>
+                    <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">¥{income.toLocaleString()}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-6">
-                    <div className="text-sm text-gray-500">Total Expense</div>
-                    <div className="text-2xl font-bold text-red-600">¥{expense.toLocaleString()}</div>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Expense</div>
+                    <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">¥{expense.toLocaleString()}</div>
                 </div>
-                <div className="bg-white rounded-xl shadow p-6">
-                    <div className="text-sm text-gray-500">Net Savings</div>
-                    <div className={`text-2xl font-bold ${income - expense >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Net Savings</div>
+                    <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${income - expense >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
                         ¥{(income - expense).toLocaleString()}
                     </div>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl shadow p-6">
-                    <h3 className="text-lg font-semibold mb-4">Expense by Category</h3>
-                    {expenseCategories.length === 0 ? (
-                        <p className="text-gray-500">No expenses this month</p>
-                    ) : (
-                        <div className="space-y-3">
-                            {expenseCategories.map((item: CategorySummaryItem) => {
-                                const percentage = expense > 0 ? (item.total / expense) * 100 : 0;
-                                return (
-                                    <div key={item.category?.id}>
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="flex items-center gap-2">
-                                                <span>{item.category?.icon}</span>
-                                                <span>{item.category?.name}</span>
-                                            </span>
-                                            <span className="text-sm text-gray-500">¥{item.total.toLocaleString()} ({percentage.toFixed(1)}%)</span>
-                                        </div>
-                                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full bg-red-500 transition-all"
-                                                style={{ width: `${percentage}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Expense by Category</h3>
+                    <div className="h-64">
+                        <canvas ref={pieExpenseRef} />
+                    </div>
                 </div>
 
-                <div className="bg-white rounded-xl shadow p-6">
-                    <h3 className="text-lg font-semibold mb-4">Income by Category</h3>
-                    {incomeCategories.length === 0 ? (
-                        <p className="text-gray-500">No income this month</p>
-                    ) : (
-                        <div className="space-y-3">
-                            {incomeCategories.map((item: CategorySummaryItem) => {
-                                const percentage = income > 0 ? (item.total / income) * 100 : 0;
-                                return (
-                                    <div key={item.category?.id}>
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="flex items-center gap-2">
-                                                <span>{item.category?.icon}</span>
-                                                <span>{item.category?.name}</span>
-                                            </span>
-                                            <span className="text-sm text-gray-500">¥{item.total.toLocaleString()} ({percentage.toFixed(1)}%)</span>
-                                        </div>
-                                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full bg-green-500 transition-all"
-                                                style={{ width: `${percentage}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Income by Category</h3>
+                    <div className="h-64">
+                        <canvas ref={pieIncomeRef} />
+                    </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow p-6">
-                <h3 className="text-lg font-semibold mb-4">Spending by Account</h3>
-                {accountSummary.length === 0 ? (
-                    <p className="text-gray-500">No transactions this month</p>
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Spending by Account</h3>
+                <div className="h-64">
+                    <canvas ref={barAccountRef} />
+                </div>
+            </div>
+
+            <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Category Breakdown</h3>
+                {categorySummary.length === 0 ? (
+                    <p className="text-gray-500 dark:text-gray-400">No data this month</p>
                 ) : (
-                    <div className="space-y-3">
-                        {accountSummary.map((item: AccountSummaryItem) => {
+                    <div className="space-y-4">
+                        {categorySummary.map((item: CategorySummaryItem) => {
                             const percentage = (income + expense) > 0 ? (item.total / (income + expense)) * 100 : 0;
+                            const isExpense = item.category?.type === 'expense';
                             return (
-                                <div key={item.account.id}>
+                                <div key={item.category?.id} className="group">
                                     <div className="flex justify-between items-center mb-1">
-                                        <span className="flex items-center gap-2">
-                                            <span>{item.account.icon}</span>
-                                            <span>{item.account.name}</span>
+                                        <span className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                                            <span className="text-lg group-hover:scale-110 transition-transform">{item.category?.icon}</span>
+                                            <span>{item.category?.name}</span>
                                         </span>
-                                        <span className="text-sm text-gray-500">¥{item.total.toLocaleString()} ({percentage.toFixed(1)}%)</span>
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">¥{item.total.toLocaleString()} ({percentage.toFixed(1)}%)</span>
                                     </div>
-                                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div className="h-2.5 bg-gray-200/50 dark:bg-gray-700/50 rounded-full overflow-hidden">
                                         <div
-                                            className="h-full bg-blue-500 transition-all"
+                                            className={`h-full rounded-full transition-all duration-500 group-hover:shadow-lg ${
+                                                isExpense ? 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/50' : 'bg-gradient-to-r from-green-500 to-emerald-500 shadow-green-500/50'
+                                            }`}
                                             style={{ width: `${percentage}%` }}
                                         />
                                     </div>

@@ -19,7 +19,7 @@
 - [x] 加载骨架屏
 - [x] Transactions 页面已集成 Luxury DataTable
 
-### Dashboard Luxury 增强（本次迭代）✅
+### Dashboard Luxury 增强 ✅
 - [x] Chart.js 图表集成（收支趋势图、分类支出饼图）
 - [x] 主题切换（暗色/亮色一键切换）
 - [x] 玻璃态效果卡片（glassmorphism）
@@ -27,19 +27,37 @@
 - [x] 预算进度条超支预警（红色高亮）
 - [x] 响应式布局优化
 
-### UI/UX Luxury 提升 ✅
-- [x] 玻璃态效果（glassmorphism）卡片
-- [x] 流畅过渡动画
-- [x] 主题切换按钮
-- [x] 卡片悬浮 3D 效果（hover scale）
+### Budgets 页面 Luxury 增强 ✅
+- [x] Chart.js 图表集成（预算分配环形图、预算vs支出柱状图）
+- [x] 玻璃态效果卡片（glassmorphism）
+- [x] 流畅过渡动画和悬浮效果
+- [x] 主题切换支持
+- [x] 预算进度条渐变色和阴影效果
+- [x] 操作按钮悬浮显示（opacity-0 group-hover:opacity-100）
+
+### Accounts 页面 Luxury 增强 ✅
+- [x] Chart.js 图表集成（账户余额环形图）
+- [x] 玻璃态效果卡片（glassmorphism）
+- [x] 账户类型分组余额统计
+- [x] 流畅过渡动画和悬浮效果
+- [x] 主题切换支持
+- [x] 操作按钮悬浮显示
+
+### Reports 页面 Luxury 增强 ✅
+- [x] Chart.js 图表集成（支出分类环形图、收入分类环形图、账户柱状图）
+- [x] 玻璃态效果卡片（glassmorphism）
+- [x] 分类详情列表带渐变进度条
+- [x] 流畅过渡动画和悬浮效果
+- [x] 主题切换支持
+
+### Categories 页面 Luxury 增强 ✅
+- [x] 玻璃态效果卡片（glassmorphism）
+- [x] 收入/支出分类不同配色方案
+- [x] 流畅过渡动画和悬浮效果
+- [x] 主题切换支持
+- [x] 操作按钮悬浮显示
 
 ## 接下来的目标
-
-### 其他页面集成 Luxury 增强
-- [ ] Budgets 页面 - 添加图表和玻璃态效果
-- [ ] Accounts 页面 - 添加图表和玻璃态效果
-- [ ] Categories 页面 - 玻璃态效果增强
-- [ ] Reports 页面 - 图表功能增强
 
 ### 创意 Luxury 方向
 - [ ] 动态粒子/光晕背景效果
@@ -47,15 +65,22 @@
 - [ ] 开机欢迎动画
 - [ ] 隐藏的交互彩蛋
 
+### 其他可能方向
+- [ ] 账户间转账功能
+- [ ] 预算周期切换（日/周/月/年）
+- [ ] 报表导出（PDF/Excel）
+- [ ] 成就系统/徽章
+
 ## 新创意想法
 - 添加 Arknights 风格的小动物动画角色
 - 节日主题装饰
-- 成就系统/徽章
 - 签到奖励
+- 主题解锁
 
 ## 当前开发迭代
-Dashboard Luxury 增强已完成：
-1. Chart.js 集成（趋势图 + 饼图）
-2. 暗色/亮色主题切换
-3. 玻璃态 UI 效果
-4. 动画和悬浮效果
+所有主要页面（Budgets, Accounts, Reports, Categories）已完成 Luxury 增强：
+1. Chart.js 图表集成（环形图、柱状图）
+2. 玻璃态 UI 效果（backdrop-blur, bg-white/70）
+3. 动画和悬浮效果（hover:-translate-y, hover:shadow-2xl）
+4. 主题切换支持
+5. 操作按钮悬浮显示（group-hover 模式）
