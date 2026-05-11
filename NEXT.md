@@ -99,6 +99,14 @@
 - [x] Wave animation on click
 - [x] Shadow/glow effects
 
+### Calendar View Luxury Enhancement ✅
+- [x] DataTable integration for selected day transactions
+- [x] Glassmorphism UI effect (backdrop-blur-xl)
+- [x] Gradient summary card for income/expense totals
+- [x] Search, pagination, and CSV export for transaction list
+- [x] Luxury button styling with hover effects
+- [x] Gradient header text for page title
+
 ## 新创意想法
 - [x] Pet Companion 宠物伙伴系统（已完成）
 - [x] 成就系统/徽章（已完成）

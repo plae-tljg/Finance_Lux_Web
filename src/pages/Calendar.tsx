@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { useAppState, useTransactionRepository } from '../contexts';
+import { useAppState, useAppDispatch, useTransactionRepository } from '../contexts';
+import { DataTable, type Column } from '../components/ui/DataTable';
 import type { Transaction } from '../services/database/schemas/Transaction';
 
 interface CalendarDay {
@@ -14,8 +15,9 @@ interface CalendarDay {
 
 export default function CalendarView() {
     const { state } = useAppState();
+    const dispatch = useAppDispatch();
     const transactionRepo = useTransactionRepository();
-    const { transactions } = state;
+    const { transactions, categories, accounts } = state;
 
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -121,7 +123,7 @@ export default function CalendarView() {
         setCurrentDate(new Date());
     };
 
-    const selectedDayTransactions = useMemo(() => {
+    const selectedDayTransactionsMemo = useMemo(() => {
         if (!selectedDate) return [];
         return transactions.filter(t => t.date === selectedDate);
     }, [selectedDate, transactions]);
@@ -131,6 +133,7 @@ export default function CalendarView() {
         if (window.confirm('Delete this transaction?')) {
             try {
                 await transactionRepo.delete(id);
+                dispatch({ type: 'DELETE_TRANSACTION', payload: id });
                 window.dispatchEvent(new CustomEvent('app-state-update'));
             } catch (err) {
                 console.error('Failed to delete transaction:', err);
@@ -138,23 +141,101 @@ export default function CalendarView() {
         }
     };
 
+    const selectedDayTransactionsMemoMemo = useMemo(() => {
+        if (!selectedDate) return [];
+        return transactions.filter(t => t.date === selectedDate);
+    }, [selectedDate, transactions]);
+
+    const selectedDayColumns: Column<Transaction>[] = [
+        {
+            key: 'description',
+            header: 'Description',
+            render: (value) => value || '-'
+        },
+        {
+            key: 'categoryId',
+            header: 'Category',
+            render: (_, item) => {
+                const category = categories.find(c => c.id === (item as Transaction).categoryId);
+                return (
+                    <span className="flex items-center gap-2">
+                        <span>{category?.icon}</span>
+                        <span>{category?.name}</span>
+                    </span>
+                );
+            }
+        },
+        {
+            key: 'accountId',
+            header: 'Account',
+            render: (_, item) => {
+                const account = accounts.find(a => a.id === (item as Transaction).accountId);
+                return (
+                    <span className="flex items-center gap-2">
+                        <span>{account?.icon}</span>
+                        <span>{account?.name}</span>
+                    </span>
+                );
+            }
+        },
+        {
+            key: 'amount',
+            header: 'Amount',
+            render: (value, item) => {
+                const t = item as Transaction;
+                return (
+                    <span className={`font-semibold ${t.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                        {t.type === 'income' ? '+' : '-'}¥{Number(value).toLocaleString()}
+                    </span>
+                );
+            }
+        },
+        {
+            key: 'mood',
+            header: 'Mood',
+            render: (value) => value ? String(value) : '-'
+        },
+        {
+            key: 'tags',
+            header: 'Tags',
+            render: (value) => {
+                if (!value) return '-';
+                const tags = String(value).split(',').map(t => t.trim()).filter(Boolean);
+                return (
+                    <div className="flex gap-1 flex-wrap">
+                        {tags.map((tag, idx) => (
+                            <span key={idx} className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded-full">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                );
+            }
+        },
+        {
+            key: 'sticker',
+            header: 'Sticker',
+            render: (value) => value ? String(value) : '-'
+        }
+    ];
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                    <span>📅</span>
-                    <span>Calendar View</span>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
+                    <span className="text-3xl group-hover:scale-110 transition-transform">📅</span>
+                    <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Calendar View</span>
                 </h2>
                 <div className="flex gap-2">
                     <button
                         onClick={() => setViewMode(viewMode === 'month' ? 'week' : 'month')}
-                        className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-purple-500/30"
+                        className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 font-medium flex items-center gap-2 hover:scale-105 active:scale-95"
                     >
                         {viewMode === 'month' ? '📆 Week View' : '🗓️ Month View'}
                     </button>
                     <button
                         onClick={goToToday}
-                        className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all"
+                        className="px-5 py-2.5 bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all border border-gray-200/50 dark:border-gray-600/50 hover:shadow-lg font-medium"
                     >
                         Today
                     </button>
@@ -325,59 +406,42 @@ export default function CalendarView() {
                         </button>
                     </div>
 
-                    {selectedDayTransactions.length === 0 ? (
+                    {selectedDayTransactionsMemo.length === 0 ? (
                         <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                             <span className="text-4xl mb-2 block">📭</span>
                             <p>No transactions on this day</p>
                         </div>
                     ) : (
-                        <div className="space-y-2">
-                            {selectedDayTransactions.map(t => (
-                                <div
-                                    key={t.id}
-                                    className="flex items-center justify-between p-3 bg-white/60 dark:bg-gray-700/60 rounded-xl hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all group"
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${t.type === 'income' ? 'bg-green-100 dark:bg-green-900/50' : 'bg-red-100 dark:bg-red-900/50'}`}>
-                                            <span className="text-lg">{t.type === 'income' ? '📥' : '📤'}</span>
-                                        </div>
-                                        <div>
-                                            <div className="font-medium text-gray-800 dark:text-white">{t.description || 'No description'}</div>
-                                            <div className="text-sm text-gray-500">
-                                                {t.mood && <span className="mr-2">{t.mood}</span>}
-                                                {t.tags && <span className="text-blue-500">{t.tags}</span>}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <span className={`font-bold text-lg ${t.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
-                                            {t.type === 'income' ? '+' : '-'}¥{t.amount.toLocaleString()}
+                        <>
+                            <div className="mb-4 p-4 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-xl border border-green-500/20 dark:border-green-400/20">
+                                <div className="flex justify-between text-sm">
+                                    <div>
+                                        <span className="text-gray-500 dark:text-gray-400">Total Income: </span>
+                                        <span className="text-green-600 dark:text-green-400 font-semibold">
+                                            +¥{selectedDayTransactionsMemo.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
                                         </span>
-                                        <button
-                                            onClick={() => handleDeleteTransaction(t.id)}
-                                            className="p-2 text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-lg transition-all"
-                                        >
-                                            🗑️
-                                        </button>
                                     </div>
-                                </div>
-                            ))}
-
-                            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600 flex justify-between text-sm">
-                                <div>
-                                    <span className="text-gray-500">Total Income: </span>
-                                    <span className="text-green-600 font-medium">
-                                        +¥{selectedDayTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span className="text-gray-500">Total Expense: </span>
-                                    <span className="text-red-600 font-medium">
-                                        -¥{selectedDayTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
-                                    </span>
+                                    <div>
+                                        <span className="text-gray-500 dark:text-gray-400">Total Expense: </span>
+                                        <span className="text-red-600 dark:text-red-400 font-semibold">
+                                            -¥{selectedDayTransactionsMemo.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <DataTable
+                                data={selectedDayTransactionsMemo}
+                                columns={selectedDayColumns}
+                                title={`${selectedDayTransactionsMemo.length} Transactions`}
+                                emptyMessage="No transactions"
+                                onRowDelete={(item) => handleDeleteTransaction((item as Transaction).id)}
+                                searchable
+                                pageable
+                                pageSizeOptions={[5, 10, 20]}
+                                exportable
+                                exportFileName={`transactions-${selectedDate}`}
+                            />
+                        </>
                     )}
                 </div>
             )}
