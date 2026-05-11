@@ -12,6 +12,7 @@ declare global {
     }
 }
 
+type PeriodType = 'daily' | 'weekly' | 'monthly' | 'yearly';
 type SortField = 'name' | 'amount' | 'spent' | 'percentage';
 type SortDirection = 'asc' | 'desc';
 
@@ -35,6 +36,7 @@ export default function Budgets() {
     const [filterCategory, setFilterCategory] = useState<number | 'all'>('all');
     const [filterStatus, setFilterStatus] = useState<'all' | 'normal' | 'exceeded'>('all');
     const [showOnlyExceedBudget, setShowOnlyExceedBudget] = useState(false);
+    const [selectedPeriod, setSelectedPeriod] = useState<PeriodType>('monthly');
 
     // Sorting
     const [sortField, setSortField] = useState<SortField>('name');
@@ -49,12 +51,59 @@ export default function Budgets() {
 
     const hasActiveFilters = searchText || filterCategory !== 'all' || filterStatus !== 'all' || showOnlyExceedBudget;
 
-    const currentMonthBudgets = budgets.filter((b: Budget) => b.month === selectedMonth);
+    const getDateRangeForPeriod = (period: PeriodType): { start: Date; end: Date } => {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const date = now.getDate();
+        const dayOfWeek = now.getDay();
+
+        switch (period) {
+            case 'daily':
+                return { start: new Date(year, month, date), end: new Date(year, month, date, 23, 59, 59) };
+            case 'weekly':
+                const weekStart = new Date(now);
+                weekStart.setDate(date - dayOfWeek);
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6);
+                weekEnd.setHours(23, 59, 59);
+                return { start: weekStart, end: weekEnd };
+            case 'monthly':
+                return {
+                    start: new Date(year, month, 1),
+                    end: new Date(year, month + 1, 0, 23, 59, 59)
+                };
+            case 'yearly':
+                return {
+                    start: new Date(year, 0, 1),
+                    end: new Date(year, 11, 31, 23, 59, 59)
+                };
+        }
+    };
+
+    const periodBudgets = useMemo(() => {
+        const { start, end } = getDateRangeForPeriod(selectedPeriod);
+        const startStr = start.toISOString().split('T')[0];
+        const endStr = end.toISOString().split('T')[0];
+
+        return budgets.filter((b: Budget) => {
+            if (b.period !== selectedPeriod) return false;
+            return b.startDate <= endStr && b.endDate >= startStr;
+        });
+    }, [budgets, selectedPeriod]);
 
     const budgetData = useMemo(() => {
-        return currentMonthBudgets.map((budget: Budget) => {
+        const { start, end } = getDateRangeForPeriod(selectedPeriod);
+        const startStr = start.toISOString().split('T')[0];
+        const endStr = end.toISOString().split('T')[0];
+
+        return periodBudgets.map((budget: Budget) => {
             const category = categories.find((c: Category) => c.id === budget.categoryId);
-            const budgetTransactions = transactions.filter((t: Transaction) => t.budgetId === budget.id && t.date.startsWith(selectedMonth));
+            const budgetTransactions = transactions.filter((t: Transaction) => {
+                if (t.budgetId !== budget.id) return false;
+                const tDate = t.date.split('T')[0];
+                return tDate >= startStr && tDate <= endStr;
+            });
             const spent = budgetTransactions.reduce((sum: number, t: Transaction) => sum + t.amount, 0);
             const percentage = budget.amount > 0 ? (spent / budget.amount) * 100 : 0;
             return {
@@ -66,7 +115,16 @@ export default function Budgets() {
                 isExceeded: percentage > 100,
             };
         });
-    }, [currentMonthBudgets, categories, transactions, selectedMonth]);
+    }, [periodBudgets, categories, transactions, selectedPeriod]);
+
+    const getPeriodLabel = (period: PeriodType): string => {
+        switch (period) {
+            case 'daily': return 'Today';
+            case 'weekly': return 'This Week';
+            case 'monthly': return 'This Month';
+            case 'yearly': return 'This Year';
+        }
+    };
 
     const filteredBudgets = useMemo(() => {
         let result = budgetData.filter((budget: typeof budgetData[0]) => {
@@ -213,14 +271,33 @@ export default function Budgets() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Budgets - {selectedMonth}</h2>
-                <button
-                    onClick={() => setShowAddModal(true)}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
-                >
-                    + Add Budget
-                </button>
+            <div className="flex items-center justify-between flex-wrap gap-4">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                    Budgets - {getPeriodLabel(selectedPeriod)}
+                </h2>
+                <div className="flex items-center gap-2">
+                    <div className="flex bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl p-1 border border-gray-300/30 dark:border-gray-600/30">
+                        {(['daily', 'weekly', 'monthly', 'yearly'] as PeriodType[]).map((period) => (
+                            <button
+                                key={period}
+                                onClick={() => setSelectedPeriod(period)}
+                                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                                    selectedPeriod === period
+                                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/30'
+                                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-700/50'
+                                }`}
+                            >
+                                {period.charAt(0).toUpperCase() + period.slice(1)}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                    >
+                        + Add Budget
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

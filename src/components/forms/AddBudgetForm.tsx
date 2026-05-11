@@ -66,6 +66,57 @@ export const AddBudgetForm: React.FC<AddBudgetFormProps> = ({ initialData, onSuc
     loadCategories();
   }, []);
 
+  useEffect(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const date = now.getDate();
+    const dayOfWeek = now.getDay();
+
+    let startDate: Date;
+    let endDate: Date;
+    let monthStr: string;
+
+    switch (formData.period) {
+      case 'daily':
+        startDate = new Date(year, month, date);
+        endDate = new Date(year, month, date, 23, 59, 59);
+        monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+        break;
+      case 'weekly':
+        startDate = new Date(now);
+        startDate.setDate(date - dayOfWeek);
+        endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
+        endDate.setHours(23, 59, 59);
+        monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+        break;
+      case 'monthly':
+      default:
+        startDate = new Date(year, month, 1);
+        endDate = new Date(year, month + 1, 0, 23, 59, 59);
+        monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+        break;
+      case 'yearly':
+        startDate = new Date(year, 0, 1);
+        endDate = new Date(year, 11, 31, 23, 59, 59);
+        monthStr = `${year}-01`;
+        break;
+    }
+
+    const newStartStr = startDate.toISOString().split('T')[0];
+    const newEndStr = endDate.toISOString().split('T')[0];
+
+    if (newStartStr !== formData.startDate || newEndStr !== formData.endDate) {
+      setFormData(prev => ({
+        ...prev,
+        startDate: newStartStr,
+        endDate: newEndStr,
+        month: monthStr,
+      }));
+    }
+  }, [formData.period]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('[AddBudgetForm] Submit started', { formData, isEditing, initialData });
