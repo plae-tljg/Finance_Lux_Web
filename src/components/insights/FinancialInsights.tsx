@@ -78,16 +78,15 @@ export const FinancialInsights: React.FC = () => {
             });
         }
 
-        const topExpenseCategory = useMemo(() => {
-            const categoryTotals: Record<number, number> = {};
-            currentMonthTransactions
-                .filter((t: any) => t.type === 'expense')
-                .forEach((t: any) => {
-                    categoryTotals[t.categoryId] = (categoryTotals[t.categoryId] || 0) + t.amount;
-                });
-            const maxCategoryId = Object.entries(categoryTotals).sort(([, a], [, b]) => b - a)[0]?.[0];
-            return categories.find((c: any) => c.id === Number(maxCategoryId));
-        }, [currentMonthTransactions, categories]);
+        const categoryTotals: Record<number, number> = {};
+        currentMonthTransactions
+            .filter((t: any) => t.type === 'expense')
+            .forEach((t: any) => {
+                categoryTotals[t.categoryId] = (categoryTotals[t.categoryId] || 0) + t.amount;
+            });
+        const sortedCategories = Object.entries(categoryTotals).sort(([, a], [, b]) => b - a);
+        const maxCategoryId = sortedCategories[0]?.[0];
+        const topExpenseCategory = maxCategoryId ? categories.find((c: any) => c.id === Number(maxCategoryId)) : null;
 
         if (topExpenseCategory && totalExpense > 0) {
             const categoryTotal = currentMonthTransactions

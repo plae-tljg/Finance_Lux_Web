@@ -259,6 +259,7 @@
 
 ### 代码清理
 - [x] Goals.tsx: 格式化缩进（4空格统一为 4 空格）
+- [x] FinancialInsights.tsx: 移除嵌套 useMemo，优化为普通计算
 
 ### Recurring Transactions System ✅
 - [x] RecurringTransaction schema（支持 frequency, nextDueDate, isActive 字段）
