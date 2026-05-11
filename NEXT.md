@@ -270,3 +270,15 @@
 - [x] 频率选项：daily, weekly, monthly, yearly
 - [x] 自动创建交易功能（首次创建时如果日期是今天则立即生成）
 - [x] 余额自动更新（转账后自动更新账户余额）
+
+### Financial Insights 智能财务洞察 ✅
+- [x] FinancialInsights 组件（智能分析用户财务数据）
+- [x] 储蓄率分析（Excellent/Good/Low 等级）
+- [x] 预算超支预警（显示超支金额和类别）
+- [x] 支出类别分析（Top Spending Category）
+- [x] 交易记录统计（提供跟踪建议）
+- [x] 高消费预警（基于月进度和收入比较）
+- [x] 应急基金建议（提醒3个月储备金）
+- [x] 定期支出分析（subscription/recurring 检测）
+- [x] 玻璃态 UI 效果卡片（多种类型样式：success/warning/info/tip）
+- [x] Dashboard 集成（Financial Insights 区块）

@@ -1,6 +1,7 @@
 import { useMemo, useEffect, useRef } from 'react';
 import { useAppState, useAppDispatch } from '../contexts/AppStateContext';
 import CheckInCard from '../components/checkin/CheckInCard';
+import { FinancialInsights } from '../components/insights';
 
 declare global {
     interface Window {
@@ -234,6 +235,11 @@ export default function Dashboard() {
                 <div>
                     <CheckInCard />
                 </div>
+            </div>
+
+            <div>
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Financial Insights</h3>
+                <FinancialInsights />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
