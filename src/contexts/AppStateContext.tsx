@@ -11,6 +11,7 @@ interface AppStateContextValue {
         loadAllData: () => Promise<void>;
         addLog: (message: string) => void;
         clearLogs: () => void;
+        toggleTheme: () => void;
     };
 }
 
@@ -27,6 +28,10 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
 
     const clearLogs = useCallback(() => {
         dispatch({ type: 'CLEAR_LOGS' });
+    }, []);
+
+    const toggleTheme = useCallback(() => {
+        dispatch({ type: 'TOGGLE_THEME' });
     }, []);
 
     const loadAllData = useCallback(async () => {
@@ -70,6 +75,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
             loadAllData,
             addLog,
             clearLogs,
+            toggleTheme,
         },
     };
 

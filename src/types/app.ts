@@ -14,6 +14,7 @@ export interface AppState {
     selectedMonth: string;
     dbVersion: string;
     logs: string[];
+    theme: 'light' | 'dark';
 }
 
 export type AppAction =
@@ -42,6 +43,7 @@ export type AppAction =
     | { type: 'SET_DB_VERSION'; payload: string }
     | { type: 'ADD_LOG'; payload: string }
     | { type: 'CLEAR_LOGS' }
+    | { type: 'TOGGLE_THEME' }
     | { type: 'LOAD_ALL_DATA'; payload: {
         categories: Category[];
         budgets: Budget[];
@@ -144,6 +146,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         }
         case 'CLEAR_LOGS':
             return { ...state, logs: [] };
+        case 'TOGGLE_THEME':
+            return { ...state, theme: state.theme === 'dark' ? 'light' : 'dark' };
         case 'LOAD_ALL_DATA':
             return {
                 ...state,
@@ -168,4 +172,5 @@ export const initialState: AppState = {
     selectedMonth: new Date().toISOString().slice(0, 7),
     dbVersion: '1.0.0',
     logs: [],
+    theme: 'dark',
 };

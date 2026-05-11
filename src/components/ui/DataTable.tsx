@@ -182,7 +182,7 @@ export function DataTable<T extends { id: number | string }>({
 
   if (isLoading) {
     return (
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 overflow-hidden animate-pulse">
         {title && (
           <div className="px-6 py-4 border-b border-gray-200/50 dark:border-gray-700/50">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
@@ -190,7 +190,7 @@ export function DataTable<T extends { id: number | string }>({
         )}
         <div className="p-6 space-y-3">
           {[...Array(skeletonRows)].map((_, i) => (
-            <div key={i} className="h-12 bg-gradient-to-r from-gray-200/50 via-gray-100/50 to-gray-200/50 dark:from-gray-700/50 dark:via-gray-600/50 dark:to-gray-700/50 rounded-xl animate-pulse" />
+            <div key={i} className="h-12 bg-gradient-to-r from-gray-200/50 via-gray-100/50 to-gray-200/50 dark:from-gray-700/50 dark:via-gray-600/50 dark:to-gray-700/50 rounded-xl" />
           ))}
         </div>
       </div>
