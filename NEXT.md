@@ -253,6 +253,9 @@
 ### Bug 修复
 - [x] Goals.tsx: 修复 Tailwind 动态优先级边框 class（border-red-400/30 border 等）
 - [x] Goals.tsx: 修复 stats 卡片动态颜色 class（text-purple-500 等）
+- [x] AddTransactionForm.tsx: 移除所有 debug console.log 语句（从约30个减少到1个）
+- [x] checkTables.ts: 修复 SQL 注入风险，添加表名白名单验证
+- [x] GoalService.ts: 添加 proper TypeScript 类型（GoalRepository 替代 any）
 
 ### 代码清理
 - [x] Goals.tsx: 格式化缩进（4空格统一为 4 空格）

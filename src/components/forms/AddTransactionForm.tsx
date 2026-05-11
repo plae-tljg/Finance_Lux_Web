@@ -56,47 +56,34 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
     const [showStickerPicker, setShowStickerPicker] = useState(false);
 
     if (!categoryRepo || !budgetRepo || !accountRepo || !transactionRepo) {
-        console.log('[AddTransactionForm] One or more repositories not ready, showing loading...');
         return <div className="text-gray-500">Loading...</div>;
     }
 
-    console.log('[AddTransactionForm] Form ready, all repositories loaded');
-
     const loadCategories = async () => {
-        console.log('[AddTransactionForm] Loading categories...');
         const cats = await categoryRepo.findAll();
-        console.log('[AddTransactionForm] Categories loaded:', cats.length);
         setCategories(cats);
         if (cats.length > 0 && formData.categoryId === 0) {
             setFormData(prev => ({ ...prev, categoryId: cats[0].id }));
-            console.log('[AddTransactionForm] Set default category:', cats[0].name);
         }
     };
 
     const loadBudgets = async () => {
-        console.log('[AddTransactionForm] Loading budgets...');
         const budgetsData = await budgetRepo.findAll();
-        console.log('[AddTransactionForm] Budgets loaded:', budgetsData.length);
         setBudgets(budgetsData);
         if (budgetsData.length > 0 && formData.budgetId === 0) {
             setFormData(prev => ({ ...prev, budgetId: budgetsData[0].id }));
-            console.log('[AddTransactionForm] Set default budget:', budgetsData[0].name);
         }
     };
 
     const loadAccounts = async () => {
-        console.log('[AddTransactionForm] Loading accounts...');
         const accountsData = await accountRepo.findActive();
-        console.log('[AddTransactionForm] Accounts loaded:', accountsData.length);
         setAccounts(accountsData);
         if (accountsData.length > 0 && formData.accountId === 0) {
             setFormData(prev => ({ ...prev, accountId: accountsData[0].id }));
-            console.log('[AddTransactionForm] Set default account:', accountsData[0].name);
         }
     };
 
     React.useEffect(() => {
-        console.log('[AddTransactionForm] Effect: loading initial data');
         loadCategories();
         loadBudgets();
         loadAccounts();
@@ -106,7 +93,6 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
         if (formData.categoryId > 0) {
             const category = categories.find(c => c.id === formData.categoryId);
             if (category) {
-                console.log('[AddTransactionForm] Category type auto-update:', category.type);
                 setFormData(prev => ({ ...prev, type: category.type }));
             }
         }
@@ -118,45 +104,33 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('[AddTransactionForm] Submit started', { formData, isEditing, initialData });
         setError(null);
         setIsSubmitting(true);
 
         try {
             if (formData.categoryId === 0) {
-                console.log('[AddTransactionForm] Validation failed: no category');
                 throw new Error('Please select a category');
             }
             if (formData.accountId === 0) {
-                console.log('[AddTransactionForm] Validation failed: no account');
                 throw new Error('Please select an account');
             }
             if (formData.budgetId === 0) {
-                console.log('[AddTransactionForm] Validation failed: no budget');
                 throw new Error('Please select a budget');
             }
             if (formData.amount <= 0) {
-                console.log('[AddTransactionForm] Validation failed: invalid amount', formData.amount);
                 throw new Error('Amount must be greater than 0');
             }
 
             if (isEditing && initialData) {
-                console.log('[AddTransactionForm] Updating transaction in database...', formData);
                 await transactionRepo.update(initialData.id, formData);
                 const updatedTransaction = { ...initialData, ...formData };
-                console.log('[AddTransactionForm] Transaction updated in DB:', updatedTransaction);
                 dispatch({ type: 'UPDATE_TRANSACTION', payload: updatedTransaction });
-                console.log('[AddTransactionForm] State updated successfully');
             } else {
-                console.log('[AddTransactionForm] Creating transaction in database...', formData);
                 const newTransaction = await transactionRepo.create(formData);
-                console.log('[AddTransactionForm] Transaction created in DB:', newTransaction);
                 dispatch({ type: 'ADD_TRANSACTION', payload: newTransaction });
-                console.log('[AddTransactionForm] State updated successfully');
             }
 
             if (onSuccess) {
-                console.log('[AddTransactionForm] Calling onSuccess callback');
                 onSuccess();
             }
 
@@ -173,19 +147,16 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
                     tags: '',
                     sticker: '',
                 });
-                console.log('[AddTransactionForm] Form reset complete');
             }
         } catch (err) {
             console.error('[AddTransactionForm] Error:', err);
             setError(err instanceof Error ? err.message : 'Failed to add transaction');
         } finally {
             setIsSubmitting(false);
-            console.log('[AddTransactionForm] Submit finished, isSubmitting set to false');
         }
     };
 
     const handleChange = (field: string, value: unknown) => {
-        console.log(`[AddTransactionForm] Field changed: ${field} =`, value);
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 

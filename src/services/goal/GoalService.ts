@@ -1,8 +1,9 @@
 import type { Goal } from '../database/schemas/Goal';
+import type { GoalRepository } from '../database/repositories/GoalRepository';
 
 class GoalService {
     private static instance: GoalService | null = null;
-    private goalRepo: any = null;
+    private goalRepo: GoalRepository | null = null;
 
     private constructor() {}
 
@@ -13,7 +14,7 @@ class GoalService {
         return GoalService.instance;
     }
 
-    setGoalRepo(repo: any) {
+    setGoalRepo(repo: GoalRepository) {
         this.goalRepo = repo;
     }
 
