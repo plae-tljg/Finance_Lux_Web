@@ -78,9 +78,30 @@
 - [x] 报表导出（PDF/Excel）
 - [x] 成就系统/徽章
 
+### Pet Companion System ✅
+- [x] PetCompanion component with SVG owl character
+- [x] Draggable positioning (can move pet around screen)
+- [x] Click interactions (wave animation, mood changes)
+- [x] Multiple mood states (happy, neutral, excited, sleepy)
+- [x] Floating message bubbles with mood-based messages
+- [x] Idle animations (breathing, blinking, ear movement)
+- [x] Appears after 2 seconds delay
+- [x] Glassmorphism UI style with gradient accents
+- [x] Integrated into Layout.tsx
+
+### Arknights-style Pet Features
+- [x] Cute owl companion with custom SVG artwork
+- [x] Smooth hover/click animations
+- [x] Mood-based visual feedback (color gradients)
+- [x] Floating messages (like game UI)
+- [x] Idle breathing animation
+- [x] Eye blinking animation
+- [x] Wave animation on click
+- [x] Shadow/glow effects
+
 ## 新创意想法
+- [x] Pet Companion 宠物伙伴系统（已完成）
 - [x] 成就系统/徽章（已完成）
-- 添加 Arknights 风格的小动物动画角色
 - 节日主题装饰
 - 签到奖励
 - 主题解锁
