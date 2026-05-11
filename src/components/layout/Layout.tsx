@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppStateContext';
-import { ParticleBackground, EasterEggs, PetCompanion } from '../effects';
+import { ParticleBackground, EasterEggs, PetCompanion, CustomCursor, ThemeSelector } from '../effects';
 import { AchievementsPanel, AchievementBadge } from '../achievements';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '');
@@ -21,25 +21,46 @@ export default function Layout() {
     const { theme } = state;
     const bgImage = `${BASE_PATH}/background_zhuang.jpg`;
     const [showAchievements, setShowAchievements] = useState(false);
+    const [customTheme, setCustomTheme] = useState(theme);
+
+    useEffect(() => {
+        const handleThemeChange = (e: CustomEvent) => {
+            setCustomTheme(e.detail);
+        };
+        window.addEventListener('luxury-theme-change', handleThemeChange as EventListener);
+        return () => window.removeEventListener('luxury-theme-change', handleThemeChange as EventListener);
+    }, []);
+
+    const themeClasses: Record<string, string> = {
+        dark: 'bg-gray-900',
+        light: 'bg-gray-100',
+        purple: 'bg-purple-950',
+        forest: 'bg-green-950',
+        sunset: 'bg-orange-950',
+        ocean: 'bg-cyan-950',
+    };
 
     return (
         <div
-            className={`min-h-screen transition-colors duration-500 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}
-            style={{
-                backgroundImage: theme === 'dark' ? 'none' : `url(${bgImage})`,
+            className={`min-h-screen transition-colors duration-500 ${themeClasses[customTheme] || themeClasses.dark}`}
+            style={customTheme === 'light' ? {
+                backgroundImage: `url(${bgImage})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 backgroundAttachment: 'fixed',
-            }}
+            } : {}}
         >
-            {theme === 'dark' && <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pointer-events-none" />}
+            {customTheme !== 'light' && (
+                <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pointer-events-none" />
+            )}
 
             <ParticleBackground />
             <EasterEggs />
             <PetCompanion />
+            <CustomCursor />
 
-            <div className={`min-h-screen ${theme === 'dark' ? 'bg-black/30' : ''}`}>
+            <div className={`min-h-screen ${customTheme === 'light' ? '' : 'bg-black/30'}`}>
                 <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg border-b border-white/20 dark:border-gray-700/30 sticky top-0 z-50 transition-all duration-300">
                     <div className="max-w-7xl mx-auto px-4 py-4">
                         <div className="flex items-center justify-between">
@@ -67,6 +88,7 @@ export default function Layout() {
                                         <span className="hidden sm:inline">{item.label}</span>
                                     </NavLink>
                                 ))}
+                                <ThemeSelector />
                                 <button
                                     onClick={() => {
                                         actions.toggleTheme();

@@ -103,8 +103,8 @@
 - [x] Pet Companion 宠物伙伴系统（已完成）
 - [x] 成就系统/徽章（已完成）
 - [x] 签到奖励（已完成）
-- 节日主题装饰
-- 主题解锁
+- [x] 主题解锁（已完成）
+- [ ] 节日主题装饰
 
 ## 当前开发迭代
 所有主要页面（Budgets, Accounts, Reports, Categories）已完成 Luxury 增强：
@@ -155,3 +155,17 @@
 - [x] Dashboard 集成（显示在核心指标卡片旁边）
 - [x] 连续签到奖励递增（基础10分，每连续一天+2分，上限50分）
 - [x] 与成就系统联动（连续7天/30天解锁对应成就）
+
+### 视觉效果增强 ✅
+- [x] CustomCursor 自定义光标效果（粒子轨迹，鼠标指针变化）
+- [x] Divider 装饰分隔线（gradient/dots/stars/wave 四种样式）
+- [x] Card3D 3D 悬浮卡片效果（useCard3DHover hook）
+- [x] useButtonRipple 按钮点击涟漪效果
+- [x] ThemeSelector 主题选择器（6种主题，解锁条件）
+- [x] 主题解锁系统（purple/forest/sunset/ocean 主题）
+
+### 主题解锁条件
+- 🔮 Mystic Purple - 解锁5个成就
+- 🌲 Forest - 创建3个预算
+- 🌅 Sunset - 添加10笔交易
+- 🌊 Ocean - 创建3个账户

@@ -6,3 +6,5 @@ export { Input } from './Input';
 export { Select } from './Select';
 export { FormField, Checkbox } from './FormField';
 export { ErrorBoundary } from './ErrorBoundary';
+export { default as Divider } from './Divider';
+export { default as Card3D } from './Card3D';
