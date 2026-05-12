@@ -6,27 +6,30 @@ import { AchievementsPanel, AchievementBadge } from '../achievements';
 import { NotificationPanel } from '../notifications';
 import { PWAInstallPrompt } from '../ui/PWAInstallPrompt';
 import { loadSettings } from '../../services/settings/SettingsService';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '');
 
 const navItems = [
-    { to: '/', label: 'Dashboard', icon: '📊' },
-    { to: '/transactions', label: 'Transactions', icon: '💸' },
-    { to: '/budgets', label: 'Budgets', icon: '📋' },
-    { to: '/accounts', label: 'Accounts', icon: '🏦' },
-    { to: '/recurring', label: 'Recurring', icon: '🔄' },
-    { to: '/categories', label: 'Categories', icon: '🏷️' },
-    { to: '/calendar', label: 'Calendar', icon: '📅' },
-    { to: '/goals', label: 'Goals', icon: '🎯' },
-    { to: '/debts', label: 'Debts', icon: '💳' },
-    { to: '/reports', label: 'Reports', icon: '📈' },
-    { to: '/settings', label: 'Settings', icon: '⚙️' },
-    { to: '/debugger', label: 'Debugger', icon: '🔧' },
+    { to: '/', labelKey: 'nav.dashboard', icon: '📊' },
+    { to: '/transactions', labelKey: 'nav.transactions', icon: '💸' },
+    { to: '/budgets', labelKey: 'nav.budgets', icon: '📋' },
+    { to: '/accounts', labelKey: 'nav.accounts', icon: '🏦' },
+    { to: '/recurring', labelKey: 'nav.recurring', icon: '🔄' },
+    { to: '/categories', labelKey: 'nav.categories', icon: '🏷️' },
+    { to: '/calendar', labelKey: 'nav.calendar', icon: '📅' },
+    { to: '/goals', labelKey: 'nav.goals', icon: '🎯' },
+    { to: '/debts', labelKey: 'nav.debts', icon: '💳' },
+    { to: '/reports', labelKey: 'nav.reports', icon: '📈' },
+    { to: '/settings', labelKey: 'nav.settings', icon: '⚙️' },
+    { to: '/debugger', labelKey: 'nav.debugger', icon: '🔧' },
 ];
 
 export default function Layout() {
     const { state, actions } = useAppState();
     const { theme } = state;
+    const { language } = state;
+    const { t } = useTranslation();
     const bgImage = `${BASE_PATH}/background_zhuang.jpg`;
     const [showAchievements, setShowAchievements] = useState(false);
     const [showNotifications, setShowNotifications] = useState(false);
@@ -108,7 +111,7 @@ export default function Layout() {
                                         }
                                     >
                                         <span>{item.icon}</span>
-                                        <span className="hidden sm:inline">{item.label}</span>
+                                        <span className="hidden sm:inline">{t(item.labelKey)}</span>
                                     </NavLink>
                                 ))}
                                 <ThemeSelector />

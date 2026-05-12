@@ -2,6 +2,7 @@ import { useMemo, useEffect, useRef } from 'react';
 import { useAppState, useAppDispatch } from '../contexts/AppStateContext';
 import CheckInCard from '../components/checkin/CheckInCard';
 import { FinancialInsights } from '../components/insights';
+import { useTranslation } from '../hooks/useTranslation';
 
 declare global {
     interface Window {
@@ -13,6 +14,7 @@ export default function Dashboard() {
     const { state } = useAppState();
     const dispatch = useAppDispatch();
     const { categories, transactions, budgets, accounts, accountBalances, selectedMonth, theme } = state;
+    const { t } = useTranslation();
 
     const trendChartRef = useRef<HTMLCanvasElement>(null);
     const pieChartRef = useRef<HTMLCanvasElement>(null);
@@ -190,7 +192,7 @@ export default function Dashboard() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h2>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t('dashboard.title')}</h2>
                 <select
                     value={selectedMonth}
                     onChange={handleMonthChange}
@@ -210,21 +212,21 @@ export default function Dashboard() {
                 <div className="lg:col-span-2">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Income</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">{t('dashboard.totalIncome')}</div>
                             <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">
                                 ¥{income.toLocaleString()}
                             </div>
                             <div className="mt-2 h-1 bg-gradient-to-r from-green-500/50 to-green-500 rounded-full" />
                         </div>
                         <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Expense</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">{t('dashboard.totalExpense')}</div>
                             <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">
                                 ¥{expense.toLocaleString()}
                             </div>
                             <div className="mt-2 h-1 bg-gradient-to-r from-red-500/50 to-red-500 rounded-full" />
                         </div>
                         <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">Balance</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">{t('dashboard.balance')}</div>
                             <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${balance >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
                                 ¥{balance.toLocaleString()}
                             </div>
@@ -237,21 +239,21 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Financial Insights</h3>
-                <FinancialInsights />
+<div>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('dashboard.budgetUsage')}</h3>
+                    <FinancialInsights />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Income vs Expense Trend</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('dashboard.incomeTrend')}</h3>
                     <div className="h-64">
                         <canvas ref={trendChartRef} />
                     </div>
                 </div>
 
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Expense by Category</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('dashboard.expenseTrend')}</h3>
                     <div className="h-64">
                         <canvas ref={pieChartRef} />
                     </div>

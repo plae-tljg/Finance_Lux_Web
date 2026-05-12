@@ -15,7 +15,8 @@ export const en = {
     settings: 'Settings',
     debugger: 'Debugger',
     recurring: 'Recurring',
-    achievements: 'Achievements'
+    achievements: 'Achievements',
+    debts: 'Debts'
   },
   dashboard: {
     title: 'Dashboard',

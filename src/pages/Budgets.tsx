@@ -5,6 +5,7 @@ import { AddBudgetForm } from '../components/forms/AddBudgetForm';
 import type { Budget } from '../services/database/schemas/Budget';
 import type { Category } from '../services/database/schemas/Category';
 import type { Transaction } from '../services/database/schemas/Transaction';
+import { useTranslation } from '../hooks/useTranslation';
 
 declare global {
     interface Window {
@@ -21,6 +22,7 @@ export default function Budgets() {
     const dispatch = useAppDispatch();
     const budgetRepo = useBudgetRepository();
     const { budgets, categories, transactions, selectedMonth, theme } = state;
+    const { t } = useTranslation();
 
     const pieChartRef = useRef<HTMLCanvasElement>(null);
     const barChartRef = useRef<HTMLCanvasElement>(null);
@@ -119,10 +121,10 @@ export default function Budgets() {
 
     const getPeriodLabel = (period: PeriodType): string => {
         switch (period) {
-            case 'daily': return 'Today';
-            case 'weekly': return 'This Week';
-            case 'monthly': return 'This Month';
-            case 'yearly': return 'This Year';
+            case 'daily': return t('budgets.daily');
+            case 'weekly': return t('budgets.weekly');
+            case 'monthly': return t('budgets.monthly');
+            case 'yearly': return t('budgets.yearly');
         }
     };
 
@@ -273,7 +275,7 @@ export default function Budgets() {
         <div className="space-y-6">
             <div className="flex items-center justify-between flex-wrap gap-4">
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                    Budgets - {getPeriodLabel(selectedPeriod)}
+                    {t('budgets.title')} - {getPeriodLabel(selectedPeriod)}
                 </h2>
                 <div className="flex items-center gap-2">
                     <div className="flex bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl p-1 border border-gray-300/30 dark:border-gray-600/30">
@@ -295,26 +297,26 @@ export default function Budgets() {
                         onClick={() => setShowAddModal(true)}
                         className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                     >
-                        + Add Budget
+                        + {t('budgets.add')}
                     </button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Budgets</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('budgets.title')}</div>
                     <div className="text-2xl font-bold text-gray-800 dark:text-white group-hover:scale-105 transition-transform">{stats.count}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Budgeted</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('budgets.total')}</div>
                     <div className="text-2xl font-bold text-blue-500 group-hover:scale-105 transition-transform">¥{stats.totalBudgeted.toLocaleString()}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Spent</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('budgets.used')}</div>
                     <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">¥{stats.totalSpent.toLocaleString()}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Exceeded</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('budgets.exceeded')}</div>
                     <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${stats.exceededCount > 0 ? 'text-red-500' : 'text-green-500'}`}>
                         {stats.exceededCount}
                     </div>
@@ -323,13 +325,13 @@ export default function Budgets() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Budget Allocation</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('budgets.title')}</h3>
                     <div className="h-64">
                         <canvas ref={pieChartRef} />
                     </div>
                 </div>
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Budget vs Spent</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('budgets.used')}</h3>
                     <div className="h-64">
                         <canvas ref={barChartRef} />
                     </div>
@@ -339,38 +341,38 @@ export default function Budgets() {
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 space-y-4">
                 <div className="flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-64">
-                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Search</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t('common.search')}</label>
                         <input
                             type="text"
-                            placeholder="Search budget name..."
+                            placeholder={t('common.search')}
                             value={searchText}
                             onChange={e => setSearchText(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Category</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t('transactions.category')}</label>
                         <select
                             value={filterCategory}
                             onChange={e => setFilterCategory(e.target.value === 'all' ? 'all' : Number(e.target.value))}
                             className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         >
-                            <option value="all">All Categories</option>
+                            <option value="all">{t('transactions.category')}</option>
                             {categories.map((c: Category) => (
                                 <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
                             ))}
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t('transactions.category')}</label>
                         <select
                             value={filterStatus}
                             onChange={e => setFilterStatus(e.target.value as 'all' | 'normal' | 'exceeded')}
                             className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         >
-                            <option value="all">All Status</option>
-                            <option value="normal">Normal</option>
-                            <option value="exceeded">Exceeded</option>
+                            <option value="all">{t('budgets.title')}</option>
+                            <option value="normal">{t('budgets.remaining')}</option>
+                            <option value="exceeded">{t('budgets.exceeded')}</option>
                         </select>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -380,14 +382,14 @@ export default function Budgets() {
                             onChange={e => setShowOnlyExceedBudget(e.target.checked)}
                             className="w-4 h-4 rounded"
                         />
-                        <span className="text-sm text-gray-600 dark:text-gray-400">Show only exceeded</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{t('budgets.exceeded')}</span>
                     </label>
                     {hasActiveFilters && (
                         <button
                             onClick={clearFilters}
                             className="px-4 py-2 text-red-500 hover:bg-red-50/50 dark:hover:bg-red-900/20 rounded-xl border border-red-200/50 dark:border-red-700/50 transition-all"
                         >
-                            Clear Filters
+                            {t('transactions.clearFilter')}
                         </button>
                     )}
                 </div>

@@ -5,6 +5,7 @@ import type { Account } from '../services/database/schemas/Account';
 import type { Transaction } from '../services/database/schemas/Transaction';
 import { ExportService, type ReportData } from '../services/export/ExportService';
 import { ShareCard } from '../components/ui/ShareCard';
+import { useTranslation } from '../hooks/useTranslation';
 
 declare global {
     interface Window {
@@ -27,6 +28,7 @@ interface AccountSummaryItem {
 export default function Reports() {
     const { state } = useAppState();
     const { transactions, categories, accounts, selectedMonth, theme } = state;
+    const { t } = useTranslation();
     const [showShareCard, setShowShareCard] = useState(false);
 
     const pieExpenseRef = useRef<HTMLCanvasElement>(null);
@@ -280,7 +282,7 @@ export default function Reports() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Reports - {selectedMonth}</h2>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{t('reports.title')} - {selectedMonth}</h2>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowShareCard(true)}
@@ -323,15 +325,15 @@ export default function Reports() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Income</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('dashboard.totalIncome')}</div>
                     <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">¥{income.toLocaleString()}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Expense</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('dashboard.totalExpense')}</div>
                     <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">¥{expense.toLocaleString()}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Net Savings</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('dashboard.balance')}</div>
                     <div className={`text-2xl font-bold group-hover:scale-105 transition-transform ${income - expense >= 0 ? 'text-blue-500' : 'text-red-500'}`}>
                         ¥{(income - expense).toLocaleString()}
                     </div>
@@ -339,7 +341,7 @@ export default function Reports() {
             </div>
 
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Income vs Expense Trend (Last 6 Months)</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('reports.incomeVsExpense')}</h3>
                 <div className="h-64">
                     <canvas ref={lineTrendRef} />
                 </div>
@@ -347,14 +349,14 @@ export default function Reports() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Expense by Category</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('reports.expenseByCategory')}</h3>
                     <div className="h-64">
                         <canvas ref={pieExpenseRef} />
                     </div>
                 </div>
 
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Income by Category</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('reports.incomeByCategory')}</h3>
                     <div className="h-64">
                         <canvas ref={pieIncomeRef} />
                     </div>
@@ -362,14 +364,14 @@ export default function Reports() {
             </div>
 
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Spending by Account</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('reports.accountBalance')}</h3>
                 <div className="h-64">
                     <canvas ref={barAccountRef} />
                 </div>
             </div>
 
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Category Breakdown</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('reports.trend')}</h3>
                 {categorySummary.length === 0 ? (
                     <p className="text-gray-500 dark:text-gray-400">No data this month</p>
                 ) : (

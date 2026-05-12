@@ -17,7 +17,8 @@ export const zh: typeof en = {
     settings: '设置',
     debugger: '调试器',
     recurring: '定期交易',
-    achievements: '成就'
+    achievements: '成就',
+    debts: '债务管理'
   },
   dashboard: {
     title: '仪表盘',
