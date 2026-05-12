@@ -34,7 +34,6 @@ export const useDatabaseSetup = () => {
     try {
       await initializeDatabaseFull(db);
     } catch (error) {
-      console.error('❌ 创建表失败:', error);
       throw error;
     }
   }, []);
@@ -51,7 +50,6 @@ export const useDatabaseSetup = () => {
     try {
       await insertSampleDataWithCheck(db);
     } catch (error) {
-      console.error('❌ 添加示例数据失败:', error);
       throw error;
     }
   }, []);
@@ -74,7 +72,6 @@ export const useDatabaseSetup = () => {
       // 创建表结构和索引
       await createTables(db);
     } catch (error) {
-      console.error('❌ 数据库初始化失败:', error);
       throw error;
     }
   }, [createTables, isDatabaseInitialized]);
@@ -109,15 +106,6 @@ export const useDatabaseSetup = () => {
       } else {
         throw new Error('数据库实例获取失败');
       }
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '未知错误';
-      setState(prev => ({
-        ...prev,
-        isLoading: false,
-        error: errorMessage,
-        isReady: false,
-      }));
-      console.error('❌ 数据库服务初始化失败:', error);
     } finally {
       isInitializingRef.current = false;
     }

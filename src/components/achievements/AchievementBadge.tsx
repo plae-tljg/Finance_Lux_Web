@@ -25,7 +25,6 @@ export default function AchievementBadge({ onClick }: AchievementBadgeProps) {
                 setPrevUnlocked(stats.unlocked);
                 setStats(result);
             } catch (error) {
-                console.error('Failed to load achievement stats:', error);
             }
         };
 

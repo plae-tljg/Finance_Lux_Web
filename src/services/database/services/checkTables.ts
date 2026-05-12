@@ -29,7 +29,6 @@ export const checkIsDatabaseInitialized = (db: any): boolean => {
         }
         return true;
     } catch (error) {
-        console.warn('检查数据库初始化状态时出错:', error);
         return false;
     }
 }

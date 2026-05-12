@@ -38,7 +38,6 @@ export default function AchievementsPanel({ isOpen, onClose }: AchievementsPanel
             const data = await achievementRepo.findAll();
             setAchievements(data);
         } catch (error) {
-            console.error('Failed to load achievements:', error);
         } finally {
             setLoading(false);
         }

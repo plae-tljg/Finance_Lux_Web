@@ -28,7 +28,6 @@ export const ImportComponent: React.FC<ImportComponentProps> = ({ onImportComple
         onImportComplete(importResult);
       }
     } catch (error) {
-      console.error('[ImportComponent] Import failed:', error);
       setResult({
         success: false,
         message: `Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`,

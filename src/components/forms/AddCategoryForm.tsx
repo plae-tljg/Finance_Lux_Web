@@ -77,7 +77,6 @@ export const AddCategoryForm: React.FC<AddCategoryFormProps> = ({ initialData, o
         });
       }
     } catch (err) {
-      console.error('[AddCategoryForm] Error:', err);
       setError(err instanceof Error ? err.message : 'Failed to add category');
     } finally {
       setIsSubmitting(false);

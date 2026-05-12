@@ -149,7 +149,6 @@ export const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ initialD
                 });
             }
         } catch (err) {
-            console.error('[AddTransactionForm] Error:', err);
             setError(err instanceof Error ? err.message : 'Failed to add transaction');
         } finally {
             setIsSubmitting(false);

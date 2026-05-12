@@ -153,7 +153,6 @@ export const AddBudgetForm: React.FC<AddBudgetFormProps> = ({ initialData, onSuc
         });
       }
     } catch (err) {
-      console.error('[AddBudgetForm] Error:', err);
       setError(err instanceof Error ? err.message : 'Failed to add budget');
     } finally {
       setIsSubmitting(false);

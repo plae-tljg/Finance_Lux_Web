@@ -152,7 +152,6 @@ class ImportService {
       result.success = false;
       result.message = `Import failed: ${error instanceof Error ? error.message : 'Unknown error'}`;
       result.errors.push(error instanceof Error ? error.message : 'Unknown error');
-      console.error('[ImportService] Import failed:', error);
     }
 
     dbService.saveToStorage();

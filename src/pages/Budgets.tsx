@@ -483,7 +483,6 @@ export default function Budgets() {
                                                         await budgetRepo.delete(budget.id);
                                                         dispatch({ type: 'DELETE_BUDGET', payload: budget.id });
                                                     } catch (err) {
-                                                        console.error('Failed to delete budget:', err);
                                                         alert('Failed to delete budget');
                                                     }
                                                 }

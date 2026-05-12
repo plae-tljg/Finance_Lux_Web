@@ -74,7 +74,6 @@ export const AddAccountForm: React.FC<AddAccountFormProps> = ({ initialData, onS
         });
       }
     } catch (err) {
-      console.error('[AddAccountForm] Error:', err);
       setError(err instanceof Error ? err.message : 'Failed to add account');
     } finally {
       setIsSubmitting(false);

@@ -33,7 +33,6 @@ class AchievementService {
             }
             return false;
         } catch (error) {
-            console.error(`Failed to check achievement ${key}:`, error);
             return false;
         }
     }

@@ -118,7 +118,6 @@ export class BankBalanceRepository implements BaseRepository<BankBalance> {
         }
       });
     } catch (error) {
-      console.error('初始化年度银行余额失败:', error);
       throw error;
     }
   }

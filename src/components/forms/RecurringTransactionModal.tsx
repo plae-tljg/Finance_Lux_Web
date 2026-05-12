@@ -129,7 +129,6 @@ export const RecurringTransactionModal: React.FC<RecurringTransactionModalProps>
             await actions.loadAllData();
             onClose();
         } catch (err) {
-            console.error('[RecurringTransactionModal] Error:', err);
             setError(err instanceof Error ? err.message : 'Failed to create recurring transaction');
         } finally {
             setIsSubmitting(false);

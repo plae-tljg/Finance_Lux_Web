@@ -109,7 +109,6 @@ export default function Categories() {
             dispatch({ type: 'DELETE_CATEGORY', payload: id });
             setDeleteConfirm(null);
         } catch (err) {
-            console.error('[Categories] Delete failed:', err);
         }
     };
 

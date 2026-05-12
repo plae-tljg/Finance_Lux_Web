@@ -511,7 +511,6 @@ export default function Transactions() {
                             await transactionRepo.delete(t.id);
                             dispatch({ type: 'DELETE_TRANSACTION', payload: t.id });
                         } catch (err) {
-                            console.error('Failed to delete transaction:', err);
                             alert('Failed to delete transaction');
                         }
                     }
@@ -526,7 +525,6 @@ export default function Transactions() {
                                 dispatch({ type: 'DELETE_TRANSACTION', payload: t.id });
                             }
                         } catch (err) {
-                            console.error('Failed to delete transactions:', err);
                             alert('Failed to delete transactions');
                         }
                     }

@@ -42,7 +42,6 @@ export class RecurringTransactionService {
         balanceRepo: ReturnType<typeof useAccountBalanceRepository>
     ): Promise<Transaction[]> {
         if (!recurringRepo || !transactionRepo || !balanceRepo) {
-            console.warn('[RecurringTransactionService] Repositories not available');
             return [];
         }
 
@@ -90,7 +89,6 @@ export class RecurringTransactionService {
                     await recurringRepo.updateNextDueDate(recurring.id, nextDueDate);
                 }
             } catch (err) {
-                console.error('[RecurringTransactionService] Error processing recurring:', recurring.id, err);
             }
         }
 

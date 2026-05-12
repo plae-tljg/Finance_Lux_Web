@@ -85,7 +85,6 @@ export class TransactionRepository implements BaseRepository<Transaction> {
       );
       return result.rows._array;
     } catch (error) {
-      console.error('Failed to fetch transactions:', error);
       return [];
     }
   }

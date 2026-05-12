@@ -76,7 +76,6 @@ export class BudgetRepository implements BaseRepository<Budget> {
   
         return createdBudget;
       } catch (error) {
-        console.error('创建预算失败:', error);
         throw error;
       }
     }

@@ -89,7 +89,6 @@ export const TransferModal: React.FC<TransferModalProps> = ({
             await actions.loadAllData();
             onSuccess();
         } catch (err) {
-            console.error('[TransferModal] Error:', err);
             setError(err instanceof Error ? err.message : 'Failed to create transfer');
         } finally {
             setIsSubmitting(false);

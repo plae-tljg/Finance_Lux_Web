@@ -92,7 +92,6 @@ export default function CheckInCard() {
                 await achievementService.checkAndUnlock('month_streak', streak);
             }
         } catch (error) {
-            console.error('Check-in failed:', error);
         } finally {
             setIsCheckingIn(false);
         }

@@ -333,7 +333,6 @@ export default function Accounts() {
                                                             await accountRepo.delete(account.id);
                                                             dispatch({ type: 'DELETE_ACCOUNT', payload: account.id });
                                                         } catch (err) {
-                                                            console.error('Failed to delete account:', err);
                                                             alert('Failed to delete account');
                                                         }
                                                     }

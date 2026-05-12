@@ -30,8 +30,7 @@ export function loadSettings(): Settings {
     if (saved) {
       return { ...defaultSettings, ...JSON.parse(saved) };
     }
-  } catch (e) {
-    console.warn('Failed to load settings:', e);
+  } catch {
   }
   return defaultSettings;
 }
@@ -39,7 +38,6 @@ export function loadSettings(): Settings {
 export function saveSettings(settings: Settings): void {
   try {
     localStorage.setItem('luxury_finance_settings', JSON.stringify(settings));
-  } catch (e) {
-    console.warn('Failed to save settings:', e);
+  } catch {
   }
 }

@@ -27,7 +27,6 @@ export function ShareCard({ isOpen, onClose, data, selectedMonth }: ShareCardPro
       const url = await ShareService.generateShareCard({ data, theme });
       setPreviewUrl(url);
     } catch (error) {
-      console.error('Failed to generate preview:', error);
     } finally {
       setIsGenerating(false);
     }
@@ -39,7 +38,6 @@ export function ShareCard({ isOpen, onClose, data, selectedMonth }: ShareCardPro
       await ShareService.generateAndDownload({ data, theme }, `financial-report-${selectedMonth}`);
       onClose();
     } catch (error) {
-      console.error('Failed to download:', error);
     } finally {
       setIsGenerating(false);
     }
@@ -55,7 +53,6 @@ export function ShareCard({ isOpen, onClose, data, selectedMonth }: ShareCardPro
       ]);
       alert('Image copied to clipboard!');
     } catch (error) {
-      console.error('Failed to copy:', error);
       alert('Failed to copy image to clipboard');
     }
   };

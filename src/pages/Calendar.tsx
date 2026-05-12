@@ -135,8 +135,7 @@ export default function CalendarView() {
                 await transactionRepo.delete(id);
                 dispatch({ type: 'DELETE_TRANSACTION', payload: id });
                 window.dispatchEvent(new CustomEvent('app-state-update'));
-            } catch (err) {
-                console.error('Failed to delete transaction:', err);
+            } catch {
             }
         }
     };

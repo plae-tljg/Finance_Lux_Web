@@ -26,7 +26,6 @@ export const RecurringTransactionsList: React.FC = () => {
             const data = await recurringRepo.findAll();
             setRecurrings(data);
         } catch (err) {
-            console.error('[RecurringTransactionsList] Error loading recurrings:', err);
         } finally {
             setIsLoading(false);
         }
@@ -50,7 +49,6 @@ export const RecurringTransactionsList: React.FC = () => {
                 await loadRecurrings();
             }
         } catch (err) {
-            console.error('[RecurringTransactionsList] Error processing due recurrings:', err);
         }
     };
 
@@ -61,7 +59,6 @@ export const RecurringTransactionsList: React.FC = () => {
             await loadRecurrings();
             setShowDeleteConfirm(null);
         } catch (err) {
-            console.error('[RecurringTransactionsList] Error deleting recurring:', err);
         }
     };
 
@@ -71,7 +68,6 @@ export const RecurringTransactionsList: React.FC = () => {
             await recurringRepo.update(recurring.id, { isActive: !recurring.isActive });
             await loadRecurrings();
         } catch (err) {
-            console.error('[RecurringTransactionsList] Error toggling recurring:', err);
         }
     };
 

@@ -158,7 +158,6 @@ export const AccountBalanceModal: React.FC<AccountBalanceModalProps> = ({
             await actions.loadAllData();
             onSuccess();
         } catch (err) {
-            console.error('[AccountBalanceModal] Error:', err);
             setError(err instanceof Error ? err.message : 'Failed to save balances');
         } finally {
             setIsSubmitting(false);

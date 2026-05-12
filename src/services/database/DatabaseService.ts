@@ -41,10 +41,9 @@ class DatabaseService implements QueryExecutor {
         }
         
         this.saveToStorage();
-      } catch (error) {
-        console.error('数据库初始化失败:', error);
-        throw error;
-      }
+} catch (error) {
+          throw error;
+        }
     }
 
     async executeQuery<T>(
@@ -110,7 +109,6 @@ class DatabaseService implements QueryExecutor {
             };
           }
         } catch (error) {
-          console.error('执行查询失败:', error);
           throw error;
         }
     }
@@ -167,8 +165,7 @@ class DatabaseService implements QueryExecutor {
         const data = this.database.export();
         const base64 = btoa(String.fromCharCode.apply(null, Array.from(data)));
         localStorage.setItem(DB_STORAGE_KEY, base64);
-      } catch (error) {
-        console.error('[DatabaseService] Failed to save database to storage:', error);
+      } catch {
       }
     }
 
@@ -184,8 +181,7 @@ class DatabaseService implements QueryExecutor {
           bytes[i] = binary.charCodeAt(i);
         }
         return bytes;
-      } catch (error) {
-        console.error('[DatabaseService] Failed to load database from storage:', error);
+      } catch {
         return null;
       }
     }
@@ -246,8 +242,7 @@ class DatabaseService implements QueryExecutor {
         const categoriesCount = categoriesResult.length > 0 ? categoriesResult[0].values[0][0] as number : 0;
         
         return categoriesCount > 0;
-      } catch (error) {
-        console.warn('检查数据库初始化状态时出错:', error);
+      } catch {
         return false;
       }
     }
@@ -313,7 +308,7 @@ await dbService.transaction(async (tx) => {
 
 // 监听事件
 dbService.on('transaction_updated', () => {
-  console.log('交易记录已更新');
+  // Transaction records updated
 });
 
 // 检查表是否存在
