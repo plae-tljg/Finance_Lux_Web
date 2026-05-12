@@ -266,3 +266,32 @@
 - [x] 移除 AddBudgetForm 中的 debug console.log（22个减少到1个）
 - [x] 移除 AddAccountForm 中的 debug console.log（11个减少到1个）
 - [x] 移除 AddCategoryForm 中的 debug console.log（11个减少到1个）
+
+### Notification 系统 ✅
+- [x] Notification schema（type, title, message, isRead, priority, actionUrl, expiresAt）
+- [x] NotificationRepository（完整的 CRUD 操作）
+- [x] NotificationService（多种通知类型生成）
+  - 预算超支预警（80%/100%阈值）
+  - 目标截止日期提醒（7天内预警）
+  - 定期交易到期提醒
+  - 成就解锁通知
+  - 签到提醒
+  - 低余额警告
+  - 每日摘要生成
+- [x] NotificationPanel 组件（玻璃态 UI，分类展示）
+- [x] 导航栏通知徽章（显示未读数量）
+
+### Recurring Transactions 页面 ✅
+- [x] RecurringTransactions.tsx 页面组件
+- [x] DataTable 集成（排序、筛选、搜索、分页）
+- [x] RecurringTransactionModal 组件（创建/编辑定期交易）
+- [x] 频率显示（Daily/Weekly/Monthly/Yearly）
+- [x] 下次到期提醒显示
+- [x] 逾期状态高亮显示
+
+### AppState 通知集成 ✅
+- [x] notifications 状态管理
+- [x] markNotificationRead 操作
+- [x] markAllNotificationsRead 操作
+- [x] deleteNotification 操作
+- [x] LOAD_ALL_DATA 载荷包含 notifications
