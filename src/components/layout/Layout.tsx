@@ -18,6 +18,7 @@ const navItems = [
     { to: '/categories', label: 'Categories', icon: '🏷️' },
     { to: '/calendar', label: 'Calendar', icon: '📅' },
     { to: '/goals', label: 'Goals', icon: '🎯' },
+    { to: '/debts', label: 'Debts', icon: '💳' },
     { to: '/reports', label: 'Reports', icon: '📈' },
     { to: '/settings', label: 'Settings', icon: '⚙️' },
     { to: '/debugger', label: 'Debugger', icon: '🔧' },

@@ -402,6 +402,7 @@
 - Categories（分类管理、图标选择）
 - Goals（财务目标、进度跟踪）
 - Calendar（日历视图、每日交易）
+- Debts（债务管理、还款跟踪）
 - Settings（备份/恢复、偏好设置）
 - Debugger（数据库管理、导入导出）
 - Recurring Transactions（定期交易）
@@ -458,3 +459,25 @@
 - [x] Settings 页面语言选择
   - 与 AppState 联动
   - 实时切换应用语言
+
+### 债务管理 (Debt Management) ✅
+- [x] Debt schema（支持多种债务类型：信用卡、贷款、房贷、学生贷款、医疗债务等）
+- [x] DebtRepository（完整的 CRUD 操作）
+- [x] DebtService（进度计算、到期天数计算、利息估算）
+- [x] Debts.tsx 页面（玻璃态 UI，债务统计卡片，债务分布图表）
+- [x] DebtForm 组件（创建/编辑债务表单）
+- [x] DebtPaymentModal 组件（还款功能，支持快捷金额）
+- [x] AppState 集成（debts 状态管理）
+- [x] Layout 导航栏集成（💳 Debts 页面入口）
+- [x] Chart.js 图表集成（债务分布环形图、还款进度条）
+- [x] 债务类型：credit_card, loan, mortgage, student_loan, medical, other
+- [x] 状态：active, paid_off, paused, cancelled
+- [x] 利率类型：fixed, variable
+
+### Debt Features
+- 债务统计（活跃债务数、已还清数、总债务、已还金额）
+- 债务分布图表（Chart.js 环形图）
+- 还款进度可视化
+- 到期日预警（7天内红色显示）
+- 还款功能（支持部分还款和全额还款）
+- 全额还清后自动标记为 paid_off

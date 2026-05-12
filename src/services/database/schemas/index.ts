@@ -6,6 +6,7 @@ export type { AccountBalance } from './AccountBalance';
 export type { Achievement, AchievementCategory } from './Achievement';
 export type { CheckIn } from './CheckIn';
 export type { Goal } from './Goal';
+export type { Debt, DebtType, DebtStatus, InterestType } from './Debt';
 
 import { DEFAULT_CATEGORIES, CategoryQueries, CATEGORY_INDEXES } from './Category';
 import { SAMPLE_TRANSACTIONS, TransactionQueries, TRANSACTION_INDEXES } from './Transaction';
@@ -15,6 +16,7 @@ import { SAMPLE_ACCOUNT_BALANCES, AccountBalanceQueries, ACCOUNT_BALANCE_INDEXES
 import { AchievementQueries, ACHIEVEMENT_INDEXES } from './Achievement';
 import { CheckInQueries, CHECKIN_INDEXES } from './CheckIn';
 import { SAMPLE_GOALS, GoalQueries, GOAL_INDEXES } from './Goal';
+import { SAMPLE_DEBTS, DebtQueries, DEBT_INDEXES } from './Debt';
 
 export const SCHEMA_VERSIONS = {
   v1: '1.0.0',
@@ -30,6 +32,7 @@ export const SCHEMAS = {
   achievements: AchievementQueries.CREATE_TABLE,
   checkins: CheckInQueries.CREATE_TABLE,
   goals: GoalQueries.CREATE_TABLE,
+  debts: DebtQueries.CREATE_TABLE,
 };
 
 export const SCHEMAS_SAMPLE_DATA = {
@@ -39,6 +42,7 @@ export const SCHEMAS_SAMPLE_DATA = {
     accounts: DEFAULT_ACCOUNTS,
     account_balances: SAMPLE_ACCOUNT_BALANCES,
     goals: SAMPLE_GOALS,
+    debts: SAMPLE_DEBTS,
 }
 
 export const SCHEMAS_VERSION = "2.0.0"
@@ -54,4 +58,5 @@ export const SCHEMAS_INDEXES = [
   ...ACHIEVEMENT_INDEXES,
   ...CHECKIN_INDEXES,
   ...GOAL_INDEXES,
+  ...DEBT_INDEXES,
 ]

@@ -1,4 +1,4 @@
-import { CategoryRepository, BudgetRepository, TransactionRepository, AccountRepository, AccountBalanceRepository, TransferRepository, AchievementRepository, RecurringTransactionRepository, NotificationRepository } from '../repositories';
+import { CategoryRepository, BudgetRepository, TransactionRepository, AccountRepository, AccountBalanceRepository, TransferRepository, AchievementRepository, RecurringTransactionRepository, NotificationRepository, DebtRepository } from '../repositories';
 import { checkIfDataExists } from './checkTables';
 import { type Database } from 'sql.js';
 import DatabaseService from '../DatabaseService';
@@ -12,7 +12,8 @@ const repositories = [
     TransferRepository,
     RecurringTransactionRepository,
     AchievementRepository,
-    NotificationRepository
+    NotificationRepository,
+    DebtRepository
 ]
 
 export const createTables = async (_db: Database, insertSampleData: boolean = false) => {

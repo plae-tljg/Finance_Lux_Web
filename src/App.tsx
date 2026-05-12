@@ -12,6 +12,7 @@ import Reports from './pages/Reports';
 import Categories from './pages/Categories';
 import Calendar from './pages/Calendar';
 import Goals from './pages/Goals';
+import Debts from './pages/Debts';
 import Settings from './pages/Settings';
 import Debugger from './pages/Debugger';
 import RecurringTransactions from './pages/RecurringTransactions';
@@ -46,6 +47,7 @@ function App() {
                                     <Route path="categories" element={<Categories />} />
                                     <Route path="calendar" element={<Calendar />} />
                                     <Route path="goals" element={<Goals />} />
+                                    <Route path="debts" element={<Debts />} />
                                     <Route path="settings" element={<Settings />} />
                                     <Route path="recurring" element={<RecurringTransactions />} />
                                     <Route path="debugger" element={<Debugger />} />

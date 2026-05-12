@@ -5,6 +5,7 @@ import type { Account } from '../services/database/schemas/Account';
 import type { AccountBalance } from '../services/database/schemas/AccountBalance';
 import type { Goal } from '../services/database/schemas/Goal';
 import type { Notification } from '../services/database/schemas/Notification';
+import type { Debt } from '../services/database/schemas/Debt';
 
 export interface AppState {
     categories: Category[];
@@ -14,6 +15,7 @@ export interface AppState {
     accountBalances: AccountBalance[];
     goals: Goal[];
     notifications: Notification[];
+    debts: Debt[];
     isLoading: boolean;
     selectedMonth: string;
     dbVersion: string;
@@ -51,6 +53,10 @@ export type AppAction =
     | { type: 'ADD_NOTIFICATION'; payload: Notification }
     | { type: 'UPDATE_NOTIFICATION'; payload: Notification }
     | { type: 'DELETE_NOTIFICATION'; payload: number }
+    | { type: 'SET_DEBTS'; payload: Debt[] }
+    | { type: 'ADD_DEBT'; payload: Debt }
+    | { type: 'UPDATE_DEBT'; payload: Debt }
+    | { type: 'DELETE_DEBT'; payload: number }
     | { type: 'SET_LOADING'; payload: boolean }
     | { type: 'SET_SELECTED_MONTH'; payload: string }
     | { type: 'SET_DB_VERSION'; payload: string }
@@ -66,6 +72,7 @@ export type AppAction =
         accountBalances: AccountBalance[];
         goals?: Goal[];
         notifications?: Notification[];
+        debts?: Debt[];
     }};
 
 export function appReducer(state: AppState, action: AppAction): AppState {
@@ -182,6 +189,22 @@ export function appReducer(state: AppState, action: AppAction): AppState {
                 ...state,
                 notifications: state.notifications.filter(n => n.id !== action.payload),
             };
+        case 'SET_DEBTS':
+            return { ...state, debts: action.payload };
+        case 'ADD_DEBT':
+            return { ...state, debts: [...state.debts, action.payload] };
+        case 'UPDATE_DEBT':
+            return {
+                ...state,
+                debts: state.debts.map(d =>
+                    d.id === action.payload.id ? action.payload : d
+                ),
+            };
+        case 'DELETE_DEBT':
+            return {
+                ...state,
+                debts: state.debts.filter(d => d.id !== action.payload),
+            };
         case 'SET_LOADING':
             return { ...state, isLoading: action.payload };
         case 'SET_SELECTED_MONTH':
@@ -208,6 +231,7 @@ export function appReducer(state: AppState, action: AppAction): AppState {
                 accountBalances: action.payload.accountBalances,
                 goals: action.payload.goals || state.goals,
                 notifications: action.payload.notifications || state.notifications,
+                debts: action.payload.debts || state.debts,
             };
         default:
             return state;
@@ -222,6 +246,7 @@ export const initialState: AppState = {
     accountBalances: [],
     goals: [],
     notifications: [],
+    debts: [],
     isLoading: false,
     selectedMonth: new Date().toISOString().slice(0, 7),
     dbVersion: '1.0.0',

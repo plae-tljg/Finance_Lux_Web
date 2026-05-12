@@ -25,7 +25,7 @@ const AppStateContext = createContext<AppStateContextValue | null>(null);
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
     const [state, dispatch] = useReducer(appReducer, initialState);
     const { dbService, isReady } = useDatabase();
-    const { categoryRepo, budgetRepo, transactionRepo, accountRepo, accountBalanceRepo, goalRepo, notificationRepo, isReady: reposReady } = useRepositories();
+    const { categoryRepo, budgetRepo, transactionRepo, accountRepo, accountBalanceRepo, goalRepo, notificationRepo, debtRepo, isReady: reposReady } = useRepositories();
 
     const addLog = useCallback((message: string) => {
         dispatch({ type: 'ADD_LOG', payload: message });
@@ -61,12 +61,12 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
 
     const loadAllData = useCallback(async () => {
         if (!dbService || !isReady || !reposReady) return;
-        if (!categoryRepo || !budgetRepo || !transactionRepo || !accountRepo || !accountBalanceRepo || !goalRepo || !notificationRepo) return;
+        if (!categoryRepo || !budgetRepo || !transactionRepo || !accountRepo || !accountBalanceRepo || !goalRepo || !notificationRepo || !debtRepo) return;
 
         try {
             dispatch({ type: 'SET_LOADING', payload: true });
 
-            const [categories, budgets, transactions, accounts, accountBalances, goals, notifications] = await Promise.all([
+            const [categories, budgets, transactions, accounts, accountBalances, goals, notifications, debts] = await Promise.all([
                 categoryRepo.findAll(),
                 budgetRepo.findAll(),
                 transactionRepo.findAll(),
@@ -74,11 +74,12 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
                 accountBalanceRepo.findAll(),
                 goalRepo.findAll(),
                 notificationRepo.getAll(),
+                debtRepo.findAll(),
             ]);
 
             dispatch({
                 type: 'LOAD_ALL_DATA',
-                payload: { categories, budgets, transactions, accounts, accountBalances, goals, notifications },
+                payload: { categories, budgets, transactions, accounts, accountBalances, goals, notifications, debts },
             });
 
             addLog('Data loaded successfully');
@@ -87,7 +88,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
         } finally {
             dispatch({ type: 'SET_LOADING', payload: false });
         }
-    }, [dbService, isReady, reposReady, categoryRepo, budgetRepo, transactionRepo, accountRepo, accountBalanceRepo, goalRepo, notificationRepo, addLog]);
+    }, [dbService, isReady, reposReady, categoryRepo, budgetRepo, transactionRepo, accountRepo, accountBalanceRepo, goalRepo, notificationRepo, debtRepo, addLog]);
 
     useEffect(() => {
         if (isReady && dbService && reposReady) {

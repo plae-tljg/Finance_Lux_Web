@@ -11,6 +11,7 @@ import { AchievementRepository } from '../services/database/repositories/Achieve
 import { CheckInRepository } from '../services/database/repositories/CheckInRepository';
 import { GoalRepository } from '../services/database/repositories/GoalRepository';
 import { NotificationRepository } from '../services/database/repositories/NotificationRepository';
+import { DebtRepository } from '../services/database/repositories/DebtRepository';
 import type { Category } from '../services/database/schemas/Category';
 import type { Budget } from '../services/database/schemas/Budget';
 import type { Transaction } from '../services/database/schemas/Transaction';
@@ -22,6 +23,7 @@ import type { Achievement } from '../services/database/schemas/Achievement';
 import type { CheckIn } from '../services/database/schemas/CheckIn';
 import type { Goal } from '../services/database/schemas/Goal';
 import type { Notification } from '../services/database/schemas/Notification';
+import type { Debt } from '../services/database/schemas/Debt';
 
 interface Repositories {
     categoryRepo: CategoryRepository | null;
@@ -35,6 +37,7 @@ interface Repositories {
     checkInRepo: CheckInRepository | null;
     goalRepo: GoalRepository | null;
     notificationRepo: NotificationRepository | null;
+    debtRepo: DebtRepository | null;
 }
 
 interface RepositoryContextValue extends Repositories {
@@ -60,6 +63,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
                 checkInRepo: null,
                 goalRepo: null,
                 notificationRepo: null,
+                debtRepo: null,
             };
         }
 
@@ -75,6 +79,7 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
                 checkInRepo: new CheckInRepository(dbService),
                 goalRepo: new GoalRepository(dbService),
                 notificationRepo: new NotificationRepository(dbService),
+                debtRepo: new DebtRepository(dbService),
             };
     }, [dbService]);
 
@@ -178,4 +183,12 @@ export function useRecurringTransactionRepository(): RecurringTransactionReposit
     return recurringTransactionRepo;
 }
 
-export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, RecurringTransaction, Achievement, CheckIn, Goal, Notification };
+export function useDebtRepository(): DebtRepository | null {
+    const { debtRepo, isReady } = useRepositories();
+    if (!isReady || !debtRepo) {
+        return null;
+    }
+    return debtRepo;
+}
+
+export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, RecurringTransaction, Achievement, CheckIn, Goal, Notification, Debt };

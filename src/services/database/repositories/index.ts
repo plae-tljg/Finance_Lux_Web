@@ -10,6 +10,7 @@ import { CheckInRepository } from './CheckInRepository';
 import { GoalRepository } from './GoalRepository';
 import { RecurringTransactionRepository } from './RecurringTransactionRepository';
 import { NotificationRepository } from './NotificationRepository';
+import { DebtRepository } from './DebtRepository';
 
 export {
     CategoryRepository,
@@ -23,5 +24,6 @@ export {
     CheckInRepository,
     GoalRepository,
     RecurringTransactionRepository,
-    NotificationRepository
+    NotificationRepository,
+    DebtRepository
 };
