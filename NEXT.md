@@ -312,3 +312,13 @@
 - [x] RecurringTransactions.tsx: 移除不存在的 props（showActions, onEdit, onDelete -> onRowEdit, onRowDelete）
 - [x] Calendar.tsx: 修复 render 函数中 value || '-' 为 String(value) || '-'
 - [x] RecurringTransactions.tsx: 更新 columns 使用正确的 key（accountName 而非 account）
+
+### Debugger 页面 Luxury 增强 ✅
+- [x] 渐变标题（bg-gradient-to-r from-teal-600 to-cyan-600）
+- [x] 玻璃态效果卡片（backdrop-blur-xl）
+- [x] 渐变按钮样式（from-teal-500 to-cyan-500, from-emerald-500 to-green-500, from-orange-500 to-amber-500）
+- [x] 表格悬浮高亮效果（hover:bg-gradient-to-r from-teal-50/30 to-cyan-50/30）
+- [x] 表头渐变背景（bg-gradient-to-r from-gray-100/50 to-gray-50/50）
+- [x] 空状态图标展示（📭）
+- [x] Summary 卡片悬浮动画效果
+- [x] 导入状态提示使用玻璃态样式
