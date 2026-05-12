@@ -80,14 +80,12 @@ export class TransactionRepository implements BaseRepository<Transaction> {
 
   async findAllWithCategory(): Promise<TransactionWithCategory[]> {
     try {
-      console.log('开始获取交易记录...');
       const result = await this.db.executeQuery<TransactionWithCategory>(
         TransactionQueries.FIND_ALL_WITH_CATEGORY
       );
-      console.log('获取到的交易记录数量:', result.rows._array.length);
       return result.rows._array;
     } catch (error) {
-      console.error('获取交易记录失败:', error);
+      console.error('Failed to fetch transactions:', error);
       return [];
     }
   }

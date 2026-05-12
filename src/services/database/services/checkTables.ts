@@ -24,7 +24,6 @@ export const checkIsDatabaseInitialized = (db: any): boolean => {
             if (!isValidTableName(tableName)) return false;
             const result = db.exec(`SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`);
             if (result.length === 0 || result[0].values.length === 0) {
-                console.log(`Table '${tableName}' not found, database needs initialization`);
                 return false;
             }
         }

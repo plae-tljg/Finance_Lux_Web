@@ -51,7 +51,6 @@ export function DatabaseProvider({ children }: { children: React.ReactNode }) {
 
       await dbService.initialize(async (db: Database) => {
         if (isDatabaseInitialized(db)) {
-          console.log('Database already initialized, skipping...');
           return;
         }
         await createTables(db);

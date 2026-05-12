@@ -11,27 +11,20 @@ export const ImportComponent: React.FC<ImportComponentProps> = ({ onImportComple
   const [isImporting, setIsImporting] = React.useState(false);
   const [result, setResult] = React.useState<ImportResult | null>(null);
 
-  console.log('[ImportComponent] Rendering, isImporting:', isImporting);
-
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) {
-      console.log('[ImportComponent] No file selected');
       return;
     }
 
-    console.log('[ImportComponent] File selected:', file.name);
     setIsImporting(true);
     setResult(null);
 
     try {
-      console.log('[ImportComponent] Calling importService.importFromFile...');
       const importResult = await importService.importFromFile(file);
-      console.log('[ImportComponent] Import result:', importResult);
       setResult(importResult);
 
       if (onImportComplete) {
-        console.log('[ImportComponent] Calling onImportComplete callback');
         onImportComplete(importResult);
       }
     } catch (error) {
@@ -51,7 +44,6 @@ export const ImportComponent: React.FC<ImportComponentProps> = ({ onImportComple
   };
 
   const handleImportClick = () => {
-    console.log('[ImportComponent] Import button clicked');
     fileInputRef.current?.click();
   };
 

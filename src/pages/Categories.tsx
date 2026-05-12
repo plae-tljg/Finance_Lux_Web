@@ -104,13 +104,9 @@ export default function Categories() {
     }
 
     const handleDelete = async (id: number) => {
-        console.log('[Categories] Delete requested for category id:', id);
         try {
-            console.log('[Categories] Calling categoryRepo.delete...');
             await categoryRepo.delete(id);
-            console.log('[Categories] Delete successful, dispatching DELETE_CATEGORY...');
             dispatch({ type: 'DELETE_CATEGORY', payload: id });
-            console.log('[Categories] State updated, closing confirm dialog');
             setDeleteConfirm(null);
         } catch (err) {
             console.error('[Categories] Delete failed:', err);

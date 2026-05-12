@@ -10,16 +10,9 @@ export default function Debugger() {
     const [importStatus, setImportStatus] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    console.log('[Debugger] Rendering, data counts:', {
-        categories: categories.length,
-        accounts: accounts.length,
-        accountBalances: accountBalances.length,
-        budgets: budgets.length,
-        transactions: transactions.length
-    });
+    
 
     const exportTable = (tableName: string, data: unknown[]) => {
-        console.log(`[Debugger] Exporting table: ${tableName}, records: ${data.length}`);
         const jsonData = JSON.stringify(data, null, 2);
         const blob = new Blob([jsonData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -28,11 +21,9 @@ export default function Debugger() {
         a.download = `${tableName}-${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
-        console.log(`[Debugger] Export complete: ${tableName}`);
     };
 
     const exportAll = () => {
-        console.log('[Debugger] Export all tables started');
         const allData = {
             categories,
             accounts,
@@ -41,7 +32,6 @@ export default function Debugger() {
             transactions,
             exportedAt: new Date().toISOString()
         };
-        console.log('[Debugger] Export all data prepared:', Object.keys(allData));
         const jsonData = JSON.stringify(allData, null, 2);
         const blob = new Blob([jsonData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -50,25 +40,20 @@ export default function Debugger() {
         a.download = `finance-all-data-${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
-        console.log('[Debugger] Export all complete');
     };
 
     const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) {
-            console.log('[Debugger] No file selected for import');
             return;
         }
 
-        console.log('[Debugger] Import file selected:', file.name);
         setImportStatus('Importing...');
 
         try {
-            console.log('[Debugger] Import file selected:', file.name);
             setImportStatus('Clearing existing data...');
 
             const result: ImportResult = await importService.importFromFile(file);
-            console.log('[Debugger] Import result:', result);
 
             if (result.success) {
                 setImportStatus(`Import complete: ${result.imported.categories} categories, ${result.imported.accounts} accounts, ${result.imported.accountBalances} balances, ${result.imported.budgets} budgets, ${result.imported.transactions} transactions. Refreshing state...`);
@@ -78,7 +63,6 @@ export default function Debugger() {
                 setImportStatus(`Import failed: ${result.message}. ${result.errors.length} errors.`);
             }
         } catch (err) {
-            console.error('[Debugger] Import error:', err);
             setImportStatus(`Import error: ${err instanceof Error ? err.message : 'Unknown error'}`);
         }
 

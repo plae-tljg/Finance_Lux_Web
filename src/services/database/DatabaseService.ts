@@ -32,10 +32,8 @@ class DatabaseService implements QueryExecutor {
         const savedData = this.loadFromStorage();
         if (savedData) {
           this.database = new SQL.Database(savedData);
-          console.log('[DatabaseService] Loaded existing database from storage');
         } else {
           this.database = new SQL.Database();
-          console.log('[DatabaseService] Created new database');
         }
         
         if (createTablesFn) {
@@ -43,7 +41,6 @@ class DatabaseService implements QueryExecutor {
         }
         
         this.saveToStorage();
-        console.log('数据库初始化完成');
       } catch (error) {
         console.error('数据库初始化失败:', error);
         throw error;
@@ -170,7 +167,6 @@ class DatabaseService implements QueryExecutor {
         const data = this.database.export();
         const base64 = btoa(String.fromCharCode.apply(null, Array.from(data)));
         localStorage.setItem(DB_STORAGE_KEY, base64);
-        console.log('[DatabaseService] Database saved to storage');
       } catch (error) {
         console.error('[DatabaseService] Failed to save database to storage:', error);
       }
@@ -187,7 +183,6 @@ class DatabaseService implements QueryExecutor {
         for (let i = 0; i < binary.length; i++) {
           bytes[i] = binary.charCodeAt(i);
         }
-        console.log('[DatabaseService] Database loaded from storage');
         return bytes;
       } catch (error) {
         console.error('[DatabaseService] Failed to load database from storage:', error);
@@ -198,7 +193,6 @@ class DatabaseService implements QueryExecutor {
     // 清除存储的数据库
     clearStorage(): void {
       localStorage.removeItem(DB_STORAGE_KEY);
-      console.log('[DatabaseService] Database storage cleared');
     }
 
     // 延迟保存（防抖，避免频繁写入）

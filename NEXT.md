@@ -262,10 +262,21 @@
 - [x] FinancialInsights.tsx: 移除嵌套 useMemo，优化为普通计算
 - [x] Reports.tsx: 移除 console.warn 语句
 
-## 代码清理
+### 代码清理
 - [x] 移除 AddBudgetForm 中的 debug console.log（22个减少到1个）
 - [x] 移除 AddAccountForm 中的 debug console.log（11个减少到1个）
 - [x] 移除 AddCategoryForm 中的 debug console.log（11个减少到1个）
+- [x] 移除所有不必要的 console.log 语句（共87个）:
+  - Categories.tsx: 4个
+  - Debugger.tsx: 13个
+  - ImportComponent.tsx: 8个
+  - DatabaseContext.tsx: 1个
+  - TransactionRepository.ts: 2个
+  - ImportService.ts: 21个
+  - DatabaseService.ts: 4个
+  - createTables.ts: 8个
+  - checkTables.ts: 1个
+  - useDatabaseSetup.ts: 5个
 
 ### Notification 系统 ✅
 - [x] Notification schema（type, title, message, isRead, priority, actionUrl, expiresAt）

@@ -50,7 +50,6 @@ export const useDatabaseSetup = () => {
     if (!db) return;
     try {
       await insertSampleDataWithCheck(db);
-      console.log('✅ 示例数据添加完成');
     } catch (error) {
       console.error('❌ 添加示例数据失败:', error);
       throw error;
@@ -69,15 +68,11 @@ export const useDatabaseSetup = () => {
     try {
       // 检查是否已经初始化
       if (isDatabaseInitialized(db)) {
-        console.log('ℹ️ 数据库已经初始化，跳过初始化步骤');
         return;
       }
 
-      console.log('🚀 开始初始化数据库...');
-      
       // 创建表结构和索引
       await createTables(db);
-      console.log('✅ 数据库初始化完成');
     } catch (error) {
       console.error('❌ 数据库初始化失败:', error);
       throw error;
@@ -102,12 +97,6 @@ export const useDatabaseSetup = () => {
       // 获取数据库实例
       const database = dbService.getDatabase();
       const isInitialized = dbService.isDatabaseInitialized();
-      
-      console.log('🔍 调试信息:', {
-        database: !!database,
-        isInitialized,
-        dbServiceExists: !!dbService
-      });
 
       if (database) {
         setState(prev => ({
@@ -117,7 +106,6 @@ export const useDatabaseSetup = () => {
           database,
           isInitialized,
         }));
-        console.log('✅ 数据库服务初始化完成，状态:', { isReady: true, isInitialized });
       } else {
         throw new Error('数据库实例获取失败');
       }
