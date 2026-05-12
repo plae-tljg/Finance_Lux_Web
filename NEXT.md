@@ -481,3 +481,17 @@
 - 到期日预警（7天内红色显示）
 - 还款功能（支持部分还款和全额还款）
 - 全额还清后自动标记为 paid_off
+
+### i18n 翻译集成 ✅
+- [x] Layout.tsx 导航栏标签使用 t() 函数（nav.dashboard, nav.transactions 等）
+- [x] Dashboard.tsx 页面标题和指标标签使用 t() 函数
+- [x] Budgets.tsx 页面标题、按钮、筛选器标签使用 t() 函数
+- [x] Reports.tsx 页面标题和图表标签使用 t() 函数
+- [x] i18n/en.ts 添加 nav.debts 翻译
+- [x] i18n/zh.ts 添加 nav.debts 翻译
+
+### i18n 翻译覆盖页面
+- Layout.tsx: 12个导航项标签
+- Dashboard.tsx: 8个标签（标题、收入/支出/结余、趋势图标题等）
+- Budgets.tsx: 15个标签（标题、按钮、统计卡片、筛选器等）
+- Reports.tsx: 8个标签（标题、统计卡片、图表标题等）
