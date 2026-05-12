@@ -14,6 +14,7 @@ import Calendar from './pages/Calendar';
 import Goals from './pages/Goals';
 import Settings from './pages/Settings';
 import Debugger from './pages/Debugger';
+import RecurringTransactions from './pages/RecurringTransactions';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '/');
 
@@ -46,6 +47,7 @@ function App() {
                                     <Route path="calendar" element={<Calendar />} />
                                     <Route path="goals" element={<Goals />} />
                                     <Route path="settings" element={<Settings />} />
+                                    <Route path="recurring" element={<RecurringTransactions />} />
                                     <Route path="debugger" element={<Debugger />} />
                                 </Route>
                             </Routes>

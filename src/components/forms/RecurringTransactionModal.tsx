@@ -1,44 +1,43 @@
 import React, { useState } from 'react';
 import { useRecurringTransactionRepository, useTransactionRepository, useAccountBalanceRepository, useAppState, useAppDispatch } from '../../contexts';
-import type { Account } from '../../services/database/schemas/Account';
-import type { Category } from '../../services/database/schemas/Category';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
 import { Button } from '../ui/Button';
 
 interface RecurringTransactionModalProps {
-    accounts: Account[];
-    categories: Category[];
-    onSuccess: () => void;
-    onCancel: () => void;
+    isOpen: boolean;
+    onClose: () => void;
+    editData?: any;
 }
 
 type Frequency = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export const RecurringTransactionModal: React.FC<RecurringTransactionModalProps> = ({
-    accounts,
-    categories,
-    onSuccess,
-    onCancel,
+    isOpen,
+    onClose,
+    editData,
 }) => {
     const recurringRepo = useRecurringTransactionRepository();
     const transactionRepo = useTransactionRepository();
     const balanceRepo = useAccountBalanceRepository();
     const dispatch = useAppDispatch();
-    const { actions } = useAppState();
+    const { state, actions } = useAppState();
 
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
 
-    const [type, setType] = useState<'income' | 'expense'>('expense');
-    const [categoryId, setCategoryId] = useState<number | ''>('');
-    const [accountId, setAccountId] = useState<number | ''>('');
-    const [amount, setAmount] = useState('');
-    const [description, setDescription] = useState('');
-    const [frequency, setFrequency] = useState<Frequency>('monthly');
-    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-    const [endDate, setEndDate] = useState('');
-    const [isActive, setIsActive] = useState(true);
+    const accounts = state.accounts;
+    const categories = state.categories;
+
+    const [type, setType] = useState<'income' | 'expense'>(editData?.type || 'expense');
+    const [categoryId, setCategoryId] = useState<number | ''>(editData?.categoryId || '');
+    const [accountId, setAccountId] = useState<number | ''>(editData?.accountId || '');
+    const [amount, setAmount] = useState(editData?.amount?.toString() || '');
+    const [description, setDescription] = useState(editData?.description || '');
+    const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>(editData?.frequency || 'monthly');
+    const [startDate, setStartDate] = useState(editData?.startDate?.split('T')[0] || new Date().toISOString().split('T')[0]);
+    const [endDate, setEndDate] = useState(editData?.endDate?.split('T')[0] || '');
+    const [isActive, setIsActive] = useState(editData?.isActive ?? true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -70,50 +69,65 @@ export const RecurringTransactionModal: React.FC<RecurringTransactionModalProps>
         setIsSubmitting(true);
 
         try {
-            const newRecurring = await recurringRepo.create({
-                amount: numAmount,
-                categoryId: categoryId as number,
-                accountId: accountId as number,
-                budgetId: 0,
-                description: description || null,
-                type,
-                frequency,
-                startDate,
-                endDate: endDate || null,
-                nextDueDate: startDate,
-                isActive,
-            });
-
-            if (startDate === new Date().toISOString().split('T')[0]) {
-                await transactionRepo.create({
+            if (editData?.id) {
+                await recurringRepo.update(editData.id, {
                     amount: numAmount,
                     categoryId: categoryId as number,
                     accountId: accountId as number,
                     budgetId: 0,
                     description: description || null,
-                    date: startDate,
                     type,
-                    mood: null,
-                    tags: null,
-                    sticker: null,
+                    frequency,
+                    startDate,
+                    endDate: endDate || null,
+                    isActive,
                 });
-
-                const latestBal = await balanceRepo.getLatestByAccount(accountId as number);
-                const closingBalance = type === 'income'
-                    ? (latestBal?.closingBalance ?? 0) + numAmount
-                    : (latestBal?.closingBalance ?? 0) - numAmount;
-
-                await balanceRepo.upsert({
+            } else {
+                const newRecurring = await recurringRepo.create({
+                    amount: numAmount,
+                    categoryId: categoryId as number,
                     accountId: accountId as number,
-                    year: currentYear,
-                    month: currentMonth,
-                    openingBalance: latestBal?.closingBalance ?? 0,
-                    closingBalance,
+                    budgetId: 0,
+                    description: description || null,
+                    type,
+                    frequency,
+                    startDate,
+                    endDate: endDate || null,
+                    nextDueDate: startDate,
+                    isActive,
                 });
+
+                if (startDate === new Date().toISOString().split('T')[0]) {
+                    await transactionRepo.create({
+                        amount: numAmount,
+                        categoryId: categoryId as number,
+                        accountId: accountId as number,
+                        budgetId: 0,
+                        description: description || null,
+                        date: startDate,
+                        type,
+                        mood: null,
+                        tags: null,
+                        sticker: null,
+                    });
+
+                    const latestBal = await balanceRepo.getLatestByAccount(accountId as number);
+                    const closingBalance = type === 'income'
+                        ? (latestBal?.closingBalance ?? 0) + numAmount
+                        : (latestBal?.closingBalance ?? 0) - numAmount;
+
+                    await balanceRepo.upsert({
+                        accountId: accountId as number,
+                        year: currentYear,
+                        month: currentMonth,
+                        openingBalance: latestBal?.closingBalance ?? 0,
+                        closingBalance,
+                    });
+                }
             }
 
             await actions.loadAllData();
-            onSuccess();
+            onClose();
         } catch (err) {
             console.error('[RecurringTransactionModal] Error:', err);
             setError(err instanceof Error ? err.message : 'Failed to create recurring transaction');
@@ -122,14 +136,14 @@ export const RecurringTransactionModal: React.FC<RecurringTransactionModalProps>
         }
     };
 
-    const frequencyLabels: Record<Frequency, string> = {
+    const frequencyLabels: Record<string, string> = {
         daily: 'Daily',
         weekly: 'Weekly',
         monthly: 'Monthly',
         yearly: 'Yearly',
     };
 
-    const frequencyIcons: Record<Frequency, string> = {
+    const frequencyIcons: Record<string, string> = {
         daily: '📅',
         weekly: '📆',
         monthly: '🗓️',
@@ -140,7 +154,7 @@ export const RecurringTransactionModal: React.FC<RecurringTransactionModalProps>
         <form onSubmit={handleSubmit} className="space-y-5">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                 <span className="text-2xl">🔄</span>
-                Create Recurring Transaction
+                {editData?.id ? 'Edit' : 'Create'} Recurring Transaction
             </h3>
 
             <div className="flex gap-2">
@@ -304,11 +318,11 @@ export const RecurringTransactionModal: React.FC<RecurringTransactionModalProps>
             </div>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Button type="button" variant="secondary" onClick={onCancel}>
+                <Button type="button" variant="secondary" onClick={onClose}>
                     Cancel
                 </Button>
                 <Button type="submit" isLoading={isSubmitting}>
-                    Create Recurring
+                    {editData?.id ? 'Update Recurring' : 'Create Recurring'}
                 </Button>
             </div>
         </form>

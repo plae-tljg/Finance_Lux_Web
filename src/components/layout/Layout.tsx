@@ -3,6 +3,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { useAppState } from '../../contexts/AppStateContext';
 import { ParticleBackground, EasterEggs, PetCompanion, CustomCursor, ThemeSelector, HolidayDecorations } from '../effects';
 import { AchievementsPanel, AchievementBadge } from '../achievements';
+import { NotificationPanel } from '../notifications';
 import { loadSettings } from '../../services/settings/SettingsService';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '');
@@ -12,6 +13,7 @@ const navItems = [
     { to: '/transactions', label: 'Transactions', icon: '💸' },
     { to: '/budgets', label: 'Budgets', icon: '📋' },
     { to: '/accounts', label: 'Accounts', icon: '🏦' },
+    { to: '/recurring', label: 'Recurring', icon: '🔄' },
     { to: '/categories', label: 'Categories', icon: '🏷️' },
     { to: '/calendar', label: 'Calendar', icon: '📅' },
     { to: '/goals', label: 'Goals', icon: '🎯' },
@@ -25,6 +27,7 @@ export default function Layout() {
     const { theme } = state;
     const bgImage = `${BASE_PATH}/background_zhuang.jpg`;
     const [showAchievements, setShowAchievements] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
     const [customTheme, setCustomTheme] = useState(theme);
     const settings = useState(() => loadSettings())[0];
 
@@ -77,6 +80,18 @@ export default function Layout() {
                                 </h1>
                             </div>
                             <nav className="flex gap-2 flex-wrap items-center">
+                                <button
+                                    onClick={() => setShowNotifications(true)}
+                                    className="relative p-3 rounded-xl bg-white/50 dark:bg-gray-800/50 hover:bg-white/70 dark:hover:bg-gray-800/70 shadow-lg hover:shadow-xl transition-all duration-300"
+                                    title="Notifications"
+                                >
+                                    <span className="text-xl">🔔</span>
+                                    {state.notifications.filter(n => !n.isRead).length > 0 && (
+                                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-red-500 to-rose-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-bounce">
+                                            {state.notifications.filter(n => !n.isRead).length}
+                                        </span>
+                                    )}
+                                </button>
                                 <AchievementBadge onClick={() => setShowAchievements(true)} />
                                 {navItems.map(item => (
                                     <NavLink
@@ -116,6 +131,13 @@ export default function Layout() {
                     <Outlet />
                 </main>
                 <AchievementsPanel isOpen={showAchievements} onClose={() => setShowAchievements(false)} />
+                <NotificationPanel
+                    notifications={state.notifications}
+                    onMarkRead={(id) => actions.markNotificationRead(id)}
+                    onMarkAllRead={() => actions.markAllNotificationsRead()}
+                    onDelete={(id) => actions.deleteNotification(id)}
+                    onClose={() => setShowNotifications(false)}
+                />
             </div>
         </div>
     );

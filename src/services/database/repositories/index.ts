@@ -9,6 +9,7 @@ import { AchievementRepository } from './AchievementRepository';
 import { CheckInRepository } from './CheckInRepository';
 import { GoalRepository } from './GoalRepository';
 import { RecurringTransactionRepository } from './RecurringTransactionRepository';
+import { NotificationRepository } from './NotificationRepository';
 
 export {
     CategoryRepository,
@@ -21,5 +22,6 @@ export {
     AchievementRepository,
     CheckInRepository,
     GoalRepository,
-    RecurringTransactionRepository
+    RecurringTransactionRepository,
+    NotificationRepository
 };

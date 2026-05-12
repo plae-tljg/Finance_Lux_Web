@@ -12,6 +12,9 @@ interface AppStateContextValue {
         addLog: (message: string) => void;
         clearLogs: () => void;
         toggleTheme: () => void;
+        markNotificationRead: (id: number) => void;
+        markAllNotificationsRead: () => void;
+        deleteNotification: (id: number) => void;
     };
 }
 
@@ -20,7 +23,7 @@ const AppStateContext = createContext<AppStateContextValue | null>(null);
 export function AppStateProvider({ children }: { children: React.ReactNode }) {
     const [state, dispatch] = useReducer(appReducer, initialState);
     const { dbService, isReady } = useDatabase();
-    const { categoryRepo, budgetRepo, transactionRepo, accountRepo, accountBalanceRepo, goalRepo, isReady: reposReady } = useRepositories();
+    const { categoryRepo, budgetRepo, transactionRepo, accountRepo, accountBalanceRepo, goalRepo, notificationRepo, isReady: reposReady } = useRepositories();
 
     const addLog = useCallback((message: string) => {
         dispatch({ type: 'ADD_LOG', payload: message });
@@ -34,25 +37,38 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
         dispatch({ type: 'TOGGLE_THEME' });
     }, []);
 
+    const markNotificationRead = useCallback((id: number) => {
+        dispatch({ type: 'UPDATE_NOTIFICATION', payload: { id, isRead: true } as any });
+    }, []);
+
+    const markAllNotificationsRead = useCallback(() => {
+        dispatch({ type: 'SET_NOTIFICATIONS', payload: state.notifications.map(n => ({ ...n, isRead: true })) });
+    }, [state.notifications]);
+
+    const deleteNotification = useCallback((id: number) => {
+        dispatch({ type: 'DELETE_NOTIFICATION', payload: id });
+    }, []);
+
     const loadAllData = useCallback(async () => {
         if (!dbService || !isReady || !reposReady) return;
-        if (!categoryRepo || !budgetRepo || !transactionRepo || !accountRepo || !accountBalanceRepo || !goalRepo) return;
+        if (!categoryRepo || !budgetRepo || !transactionRepo || !accountRepo || !accountBalanceRepo || !goalRepo || !notificationRepo) return;
 
         try {
             dispatch({ type: 'SET_LOADING', payload: true });
 
-            const [categories, budgets, transactions, accounts, accountBalances, goals] = await Promise.all([
+            const [categories, budgets, transactions, accounts, accountBalances, goals, notifications] = await Promise.all([
                 categoryRepo.findAll(),
                 budgetRepo.findAll(),
                 transactionRepo.findAll(),
                 accountRepo.findAll(),
                 accountBalanceRepo.findAll(),
                 goalRepo.findAll(),
+                notificationRepo.getAll(),
             ]);
 
             dispatch({
                 type: 'LOAD_ALL_DATA',
-                payload: { categories, budgets, transactions, accounts, accountBalances, goals },
+                payload: { categories, budgets, transactions, accounts, accountBalances, goals, notifications },
             });
 
             addLog('Data loaded successfully');
@@ -61,7 +77,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
         } finally {
             dispatch({ type: 'SET_LOADING', payload: false });
         }
-    }, [dbService, isReady, reposReady, categoryRepo, budgetRepo, transactionRepo, accountRepo, accountBalanceRepo, goalRepo, addLog]);
+    }, [dbService, isReady, reposReady, categoryRepo, budgetRepo, transactionRepo, accountRepo, accountBalanceRepo, goalRepo, notificationRepo, addLog]);
 
     useEffect(() => {
         if (isReady && dbService && reposReady) {
@@ -77,6 +93,9 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
             addLog,
             clearLogs,
             toggleTheme,
+            markNotificationRead,
+            markAllNotificationsRead,
+            deleteNotification,
         },
     };
 

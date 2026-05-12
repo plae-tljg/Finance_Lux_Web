@@ -10,6 +10,7 @@ import { RecurringTransactionRepository } from '../services/database/repositorie
 import { AchievementRepository } from '../services/database/repositories/AchievementRepository';
 import { CheckInRepository } from '../services/database/repositories/CheckInRepository';
 import { GoalRepository } from '../services/database/repositories/GoalRepository';
+import { NotificationRepository } from '../services/database/repositories/NotificationRepository';
 import type { Category } from '../services/database/schemas/Category';
 import type { Budget } from '../services/database/schemas/Budget';
 import type { Transaction } from '../services/database/schemas/Transaction';
@@ -20,6 +21,7 @@ import type { RecurringTransaction } from '../services/database/schemas/Recurrin
 import type { Achievement } from '../services/database/schemas/Achievement';
 import type { CheckIn } from '../services/database/schemas/CheckIn';
 import type { Goal } from '../services/database/schemas/Goal';
+import type { Notification } from '../services/database/schemas/Notification';
 
 interface Repositories {
     categoryRepo: CategoryRepository | null;
@@ -32,6 +34,7 @@ interface Repositories {
     achievementRepo: AchievementRepository | null;
     checkInRepo: CheckInRepository | null;
     goalRepo: GoalRepository | null;
+    notificationRepo: NotificationRepository | null;
 }
 
 interface RepositoryContextValue extends Repositories {
@@ -56,21 +59,23 @@ export function RepositoryProvider({ children }: { children: React.ReactNode }) 
                 achievementRepo: null,
                 checkInRepo: null,
                 goalRepo: null,
+                notificationRepo: null,
             };
         }
 
         return {
-            categoryRepo: new CategoryRepository(dbService),
-            budgetRepo: new BudgetRepository(dbService),
-            transactionRepo: new TransactionRepository(dbService),
-            accountRepo: new AccountRepository(dbService),
-            accountBalanceRepo: new AccountBalanceRepository(dbService),
-            transferRepo: new TransferRepository(dbService),
-            recurringTransactionRepo: new RecurringTransactionRepository(dbService),
-            achievementRepo: new AchievementRepository(dbService),
-            checkInRepo: new CheckInRepository(dbService),
-            goalRepo: new GoalRepository(dbService),
-        };
+                categoryRepo: new CategoryRepository(dbService),
+                budgetRepo: new BudgetRepository(dbService),
+                transactionRepo: new TransactionRepository(dbService),
+                accountRepo: new AccountRepository(dbService),
+                accountBalanceRepo: new AccountBalanceRepository(dbService),
+                transferRepo: new TransferRepository(dbService),
+                recurringTransactionRepo: new RecurringTransactionRepository(dbService),
+                achievementRepo: new AchievementRepository(dbService),
+                checkInRepo: new CheckInRepository(dbService),
+                goalRepo: new GoalRepository(dbService),
+                notificationRepo: new NotificationRepository(dbService),
+            };
     }, [dbService]);
 
     const value = useMemo(() => ({
@@ -173,4 +178,4 @@ export function useRecurringTransactionRepository(): RecurringTransactionReposit
     return recurringTransactionRepo;
 }
 
-export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, RecurringTransaction, Achievement, CheckIn, Goal };
+export type { Category, Budget, Transaction, Account, AccountBalance, Transfer, RecurringTransaction, Achievement, CheckIn, Goal, Notification };
