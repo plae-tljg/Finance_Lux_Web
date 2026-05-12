@@ -56,82 +56,74 @@ export default function RecurringTransactions() {
     const columns = useMemo(() => [
         {
             key: 'description',
-            label: 'Description',
+            header: 'Description',
             sortable: true,
-            render: (row: any) => (
-                <div className="flex items-center gap-2">
-                    <span className="text-lg">{row.categoryIcon}</span>
-                    <div>
-                        <div className="font-medium text-gray-800 dark:text-gray-200">{row.description || 'No description'}</div>
-                        <div className="text-xs text-gray-500">{row.categoryName}</div>
-                    </div>
-                </div>
-            ),
+            render: (value) => value || 'No description'
         },
         {
             key: 'amount',
-            label: 'Amount',
+            header: 'Amount',
             sortable: true,
-            render: (row: any) => (
-                <span className={`font-semibold ${row.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
-                    {row.type === 'income' ? '+' : '-'}¥{row.amount.toLocaleString()}
+            render: (value, item: any) => (
+                <span className={`font-semibold ${item.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+                    {item.type === 'income' ? '+' : '-'}¥{Number(value).toLocaleString()}
                 </span>
             ),
         },
         {
             key: 'frequency',
-            label: 'Frequency',
+            header: 'Frequency',
             sortable: true,
-            render: (row: any) => (
+            render: (value, item: any) => (
                 <span className="px-2 py-1 bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400 rounded-lg text-sm">
-                    {getFrequencyText(row.frequency)}
+                    {getFrequencyText(String(value))}
                 </span>
             ),
         },
         {
             key: 'nextDueDate',
-            label: 'Next Due',
+            header: 'Next Due',
             sortable: true,
-            render: (row: any) => (
+            render: (value, item: any) => (
                 <div>
-                    <div className={`text-sm ${row.isOverdue ? 'text-red-500 font-medium' : 'text-gray-700 dark:text-gray-300'}`}>
-                        {row.nextDueText}
+                    <div className={`text-sm ${item.isOverdue ? 'text-red-500 font-medium' : 'text-gray-700 dark:text-gray-300'}`}>
+                        {item.nextDueText}
                     </div>
-                    <div className="text-xs text-gray-500">{row.nextDueDate.split('T')[0]}</div>
+                    <div className="text-xs text-gray-500">{String(value).split('T')[0]}</div>
                 </div>
             ),
         },
         {
-            key: 'account',
-            label: 'Account',
+            key: 'accountName',
+            header: 'Account',
             sortable: true,
-            render: (row: any) => (
+            render: (value, item: any) => (
                 <div className="flex items-center gap-2">
-                    <span>{row.accountIcon}</span>
-                    <span className="text-sm text-gray-700 dark:text-gray-300">{row.accountName}</span>
+                    <span>{item.accountIcon}</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">{value}</span>
                 </div>
             ),
         },
         {
-            key: 'budget',
-            label: 'Budget',
-            render: (row: any) => (
+            key: 'budgetName',
+            header: 'Budget',
+            render: (value) => (
                 <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg text-sm">
-                    {row.budgetName}
+                    {value}
                 </span>
             ),
         },
         {
             key: 'isActive',
-            label: 'Status',
+            header: 'Status',
             sortable: true,
-            render: (row: any) => (
+            render: (value) => (
                 <span className={`px-2 py-1 rounded-lg text-sm ${
-                    row.isActive
+                    value === 'Active'
                         ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
                         : 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
                 }`}>
-                    {row.isActive}
+                    {value}
                 </span>
             ),
         },
@@ -179,9 +171,8 @@ export default function RecurringTransactions() {
                     data={tableData}
                     columns={columns}
                     emptyMessage="No recurring transactions yet"
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    showActions
+                    onRowEdit={handleEdit}
+                    onRowDelete={handleDelete}
                 />
             </div>
 

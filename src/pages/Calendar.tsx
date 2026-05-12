@@ -145,7 +145,7 @@ export default function CalendarView() {
         {
             key: 'description',
             header: 'Description',
-            render: (value) => value || '-'
+            render: (value) => String(value) || '-'
         },
         {
             key: 'categoryId',
