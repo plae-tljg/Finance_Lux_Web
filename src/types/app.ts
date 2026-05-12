@@ -19,6 +19,7 @@ export interface AppState {
     dbVersion: string;
     logs: string[];
     theme: 'light' | 'dark';
+    language: 'en' | 'zh';
 }
 
 export type AppAction =
@@ -56,6 +57,7 @@ export type AppAction =
     | { type: 'ADD_LOG'; payload: string }
     | { type: 'CLEAR_LOGS' }
     | { type: 'TOGGLE_THEME' }
+    | { type: 'SET_LANGUAGE'; payload: 'en' | 'zh' }
     | { type: 'LOAD_ALL_DATA'; payload: {
         categories: Category[];
         budgets: Budget[];
@@ -194,6 +196,8 @@ export function appReducer(state: AppState, action: AppAction): AppState {
             return { ...state, logs: [] };
         case 'TOGGLE_THEME':
             return { ...state, theme: state.theme === 'dark' ? 'light' : 'dark' };
+        case 'SET_LANGUAGE':
+            return { ...state, language: action.payload };
         case 'LOAD_ALL_DATA':
             return {
                 ...state,
@@ -223,4 +227,5 @@ export const initialState: AppState = {
     dbVersion: '1.0.0',
     logs: [],
     theme: 'dark',
+    language: 'en',
 };

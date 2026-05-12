@@ -381,7 +381,11 @@
 ### 潜在功能
 - [x] PWA 支持（离线使用）✅ 已实现
 - 数据同步（云备份）
-- 多语言支持
+- [x] 多语言支持 ✅ 已实现
+  - i18n 服务（英文/中文）
+  - useTranslation hook
+  - 语言切换按钮（导航栏 + 设置页面）
+  - AppState 语言状态管理
 - 高级预算模板
 - 投资组合跟踪
 - 债务管理
@@ -389,3 +393,22 @@
 - 预算提醒通知
 - 财务预测
 - AI 智能建议
+
+### 多语言支持 ✅
+- [x] i18n 服务（src/i18n/）
+  - en.ts - 英文翻译
+  - zh.ts - 中文翻译
+  - index.ts - t() 函数和语言切换
+- [x] AppState 语言状态管理
+  - language 字段（'en' | 'zh'）
+  - SET_LANGUAGE action
+  - toggleLanguage() 和 setLanguage() 操作
+- [x] useTranslation hook
+  - 便捷的翻译函数
+  - 响应式语言切换
+- [x] 导航栏语言切换按钮
+  - 中/EN 按钮
+  - 渐变样式玻璃态效果
+- [x] Settings 页面语言选择
+  - 与 AppState 联动
+  - 实时切换应用语言

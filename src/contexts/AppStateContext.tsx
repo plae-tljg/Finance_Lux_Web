@@ -12,6 +12,8 @@ interface AppStateContextValue {
         addLog: (message: string) => void;
         clearLogs: () => void;
         toggleTheme: () => void;
+        toggleLanguage: () => void;
+        setLanguage: (lang: 'en' | 'zh') => void;
         markNotificationRead: (id: number) => void;
         markAllNotificationsRead: () => void;
         deleteNotification: (id: number) => void;
@@ -35,6 +37,14 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
 
     const toggleTheme = useCallback(() => {
         dispatch({ type: 'TOGGLE_THEME' });
+    }, []);
+
+    const toggleLanguage = useCallback(() => {
+        dispatch({ type: 'SET_LANGUAGE', payload: state.language === 'en' ? 'zh' : 'en' });
+    }, [state.language]);
+
+    const setLanguage = useCallback((lang: 'en' | 'zh') => {
+        dispatch({ type: 'SET_LANGUAGE', payload: lang });
     }, []);
 
     const markNotificationRead = useCallback((id: number) => {
@@ -93,6 +103,8 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
             addLog,
             clearLogs,
             toggleTheme,
+            toggleLanguage,
+            setLanguage,
             markNotificationRead,
             markAllNotificationsRead,
             deleteNotification,

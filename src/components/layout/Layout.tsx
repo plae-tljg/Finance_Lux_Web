@@ -124,6 +124,13 @@ export default function Layout() {
                                 >
                                     {theme === 'dark' ? '☀️' : '🌙'}
                                 </button>
+                                <button
+                                    onClick={() => actions.toggleLanguage()}
+                                    className="p-3 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 transition-all duration-300 hover:scale-105 active:scale-95"
+                                    title={state.language === 'en' ? 'Switch to Chinese' : '切换到英文'}
+                                >
+                                    {state.language === 'en' ? '中' : 'EN'}
+                                </button>
                             </nav>
                         </div>
                     </div>

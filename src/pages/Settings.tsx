@@ -5,8 +5,7 @@ import { loadSettings, saveSettings, type Settings, defaultSettings } from '../s
 import { databaseService } from '../services/database/DatabaseService';
 
 export default function Settings() {
-    const { state } = useAppState();
-    const dispatch = useAppDispatch();
+    const { state, actions } = useAppState();
     const [settings, setSettings] = useState<Settings>(() => loadSettings());
     const [showBackupModal, setShowBackupModal] = useState(false);
     const [showRestoreModal, setShowRestoreModal] = useState(false);
@@ -115,9 +114,9 @@ export default function Settings() {
                         {(['zh', 'en'] as const).map(lang => (
                             <button
                                 key={lang}
-                                onClick={() => setSettings(prev => ({ ...prev, language: lang }))}
+                                onClick={() => actions.setLanguage(lang)}
                                 className={`w-full px-4 py-3 rounded-xl transition-all ${
-                                    settings.language === lang
+                                    state.language === lang
                                         ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg'
                                         : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                                 }`}
