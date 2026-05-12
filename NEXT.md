@@ -498,11 +498,11 @@
 - Accounts.tsx: 完整的 i18n 翻译集成（标题、按钮、统计卡片、筛选器、模态框）
 - Categories.tsx: 完整的 i18n 翻译集成（标题、按钮、统计卡片、筛选器、分组标题）
 - Goals.tsx: 完整的 i18n 翻译集成（标题、按钮、统计卡片、进度文本、到期预警、分类名称）
+- Debts.tsx: 完整的 i18n 翻译集成（标题、按钮、统计卡片、债务信息、模态框）
+- Settings.tsx: 完整的 i18n 翻译集成（标题、按钮、设置项、备份/恢复、数据统计）
 
 ### i18n 新增翻译键值
 - goals.active, goals.totalTarget, goals.saved, goals.createFirst, goals.startSaving
 - goals.noDescription, goals.daysRemaining, goals.daysOverdueText, goals.overdue, goals.contribute
-
-### 待完善 i18n 页面
-- Debts.tsx: 部分硬编码中文需要翻译（债务管理、添加债务、统计卡片等）
-- Settings.tsx: 可能存在硬编码文本
+- debts.*: 完整的债务管理页面翻译（title, add, edit, delete, active, paidOff, totalDebt, distribution, repaymentProgress 等 23 个翻译键）
+- settings.*: 完整设置页面翻译（title, language, currency, backup, restore, display, compactMode, showPet, showParticles, dangerZone, clearAllData 等 27 个翻译键）
