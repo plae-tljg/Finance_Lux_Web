@@ -306,3 +306,9 @@
 - [x] markAllNotificationsRead 操作
 - [x] deleteNotification 操作
 - [x] LOAD_ALL_DATA 载荷包含 notifications
+
+### Bug 修复 - DataTable 接口一致性 ✅
+- [x] RecurringTransactions.tsx: 修复 Column 接口（label -> header, render 函数签名）
+- [x] RecurringTransactions.tsx: 移除不存在的 props（showActions, onEdit, onDelete -> onRowEdit, onRowDelete）
+- [x] Calendar.tsx: 修复 render 函数中 value || '-' 为 String(value) || '-'
+- [x] RecurringTransactions.tsx: 更新 columns 使用正确的 key（accountName 而非 account）
