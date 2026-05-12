@@ -336,6 +336,13 @@
 - [x] useDatabaseSetup.ts: 移除 console.error (4处)
 - [x] 其他所有组件和服务的 console 语句已清理
 
+### PWA 支持 ✅
+- [x] manifest.json（应用名称、图标、主题色、显示模式）
+- [x] Service Worker（缓存策略、离线支持）
+- [x] usePWAInstall hook（安装提示管理）
+- [x] PWAInstallPrompt 组件（安装按钮动画）
+- [x] Layout 集成（自动检测可安装状态）
+
 ## 项目状态
 
 所有主要功能已完成实现并增强到 Luxury 标准：
@@ -372,7 +379,7 @@
 ## 下一步探索方向
 
 ### 潜在功能
-- PWA 支持（离线使用）
+- [x] PWA 支持（离线使用）✅ 已实现
 - 数据同步（云备份）
 - 多语言支持
 - 高级预算模板

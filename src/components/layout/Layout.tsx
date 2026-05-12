@@ -4,6 +4,7 @@ import { useAppState } from '../../contexts/AppStateContext';
 import { ParticleBackground, EasterEggs, PetCompanion, CustomCursor, ThemeSelector, HolidayDecorations } from '../effects';
 import { AchievementsPanel, AchievementBadge } from '../achievements';
 import { NotificationPanel } from '../notifications';
+import { PWAInstallPrompt } from '../ui/PWAInstallPrompt';
 import { loadSettings } from '../../services/settings/SettingsService';
 
 const BASE_PATH = (import.meta.env.VITE_BASE_PATH as string) || (import.meta.env.PROD ? '/Finance-Management-Web' : '');
@@ -138,6 +139,7 @@ export default function Layout() {
                     onDelete={(id) => actions.deleteNotification(id)}
                     onClose={() => setShowNotifications(false)}
                 />
+                <PWAInstallPrompt />
             </div>
         </div>
     );
