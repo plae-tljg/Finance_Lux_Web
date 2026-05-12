@@ -495,3 +495,14 @@
 - Dashboard.tsx: 8个标签（标题、收入/支出/结余、趋势图标题等）
 - Budgets.tsx: 15个标签（标题、按钮、统计卡片、筛选器等）
 - Reports.tsx: 8个标签（标题、统计卡片、图表标题等）
+- Accounts.tsx: 完整的 i18n 翻译集成（标题、按钮、统计卡片、筛选器、模态框）
+- Categories.tsx: 完整的 i18n 翻译集成（标题、按钮、统计卡片、筛选器、分组标题）
+- Goals.tsx: 完整的 i18n 翻译集成（标题、按钮、统计卡片、进度文本、到期预警、分类名称）
+
+### i18n 新增翻译键值
+- goals.active, goals.totalTarget, goals.saved, goals.createFirst, goals.startSaving
+- goals.noDescription, goals.daysRemaining, goals.daysOverdueText, goals.overdue, goals.contribute
+
+### 待完善 i18n 页面
+- Debts.tsx: 部分硬编码中文需要翻译（债务管理、添加债务、统计卡片等）
+- Settings.tsx: 可能存在硬编码文本
