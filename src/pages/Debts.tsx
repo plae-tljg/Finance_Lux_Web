@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAppState, useAppDispatch, useDebtRepository } from '../contexts';
+import { useTranslation } from '../i18n';
 import { Modal } from '../components/ui/Modal';
 import { DebtForm } from '../components/debts/DebtForm';
 import { DebtPaymentModal } from '../components/debts/DebtPaymentModal';
@@ -15,6 +16,7 @@ export default function Debts() {
     const dispatch = useAppDispatch();
     const debtRepo = useDebtRepository();
     const { debts } = state;
+    const { t } = useTranslation();
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingDebt, setEditingDebt] = useState<Debt | null>(null);
@@ -124,23 +126,23 @@ export default function Debts() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                    债务管理
+                    {t('debts.title')}
                 </h2>
                 <button
                     onClick={() => setShowAddModal(true)}
                     className="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl hover:from-red-600 hover:to-orange-600 shadow-lg shadow-red-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                 >
-                    + 添加债务
+                    + {t('debts.add')}
                 </button>
             </div>
 
             {stats && (
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {[
-                        { label: '活跃债务', value: stats.active, color: 'red' },
-                        { label: '已还清', value: stats.paidOff, color: 'green' },
-                        { label: '总债务', value: `¥${stats.totalDebt.toLocaleString()}`, color: 'orange' },
-                        { label: '已还金额', value: `¥${stats.totalPaid.toLocaleString()}`, color: 'emerald' },
+                        { label: t('debts.active'), value: stats.active, color: 'red' },
+                        { label: t('debts.paidOff'), value: stats.paidOff, color: 'green' },
+                        { label: t('debts.totalDebt'), value: `¥${stats.totalDebt.toLocaleString()}`, color: 'orange' },
+                        { label: t('debts.totalPaid'), value: `¥${stats.totalPaid.toLocaleString()}`, color: 'emerald' },
                     ].map((stat, i) => {
                         const colorClasses: Record<string, string> = {
                             red: 'text-red-500',
@@ -161,7 +163,7 @@ export default function Debts() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {activeDebts.length > 0 && (
                     <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5">
-                        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">债务分布</h3>
+                        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">{t('debts.distribution')}</h3>
                         <div className="h-64">
                             <Doughnut data={chartData} options={chartOptions} />
                         </div>
@@ -169,7 +171,7 @@ export default function Debts() {
                 )}
 
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5">
-                    <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">还款进度</h3>
+                    <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">{t('debts.repaymentProgress')}</h3>
                     <div className="space-y-4">
                         {activeDebts.slice(0, 5).map(debt => (
                             <div key={debt.id} className="space-y-1">
@@ -191,7 +193,7 @@ export default function Debts() {
                             </div>
                         ))}
                         {activeDebts.length === 0 && (
-                            <p className="text-gray-500 dark:text-gray-400 text-center py-4">暂无活跃债务</p>
+                            <p className="text-gray-500 dark:text-gray-400 text-center py-4">{t('debts.noActiveDebts')}</p>
                         )}
                     </div>
                 </div>
@@ -200,13 +202,13 @@ export default function Debts() {
             {debts.length === 0 ? (
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-12 text-center">
                     <div className="text-6xl mb-4">💳</div>
-                    <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">还没有债务</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">添加您的第一笔债务，开始管理您的财务</p>
+                    <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">{t('debts.noActiveDebts')}</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">{t('debts.startManaging')}</p>
                     <button
                         onClick={() => setShowAddModal(true)}
                         className="px-6 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl hover:from-red-600 hover:to-orange-600 shadow-lg shadow-red-500/30 transition-all"
                     >
-                        + 添加第一笔债务
+                        + {t('debts.addFirst')}
                     </button>
                 </div>
             ) : (
@@ -218,7 +220,7 @@ export default function Debts() {
                         >
                             {debt.status === 'paid_off' && (
                                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-center py-1 text-sm font-medium z-10">
-                                    ✨ 已还清
+                                    ✨ {t('debts.paidOffLabel')}
                                 </div>
                             )}
 
@@ -253,7 +255,7 @@ export default function Debts() {
                                         </button>
                                         <button
                                             onClick={async () => {
-                                                if (window.confirm('确定要删除这笔债务吗？')) {
+                                                if (window.confirm(t('debts.confirmDelete'))) {
                                                     await handleDebtDelete(debt.id);
                                                 }
                                             }}
@@ -266,7 +268,7 @@ export default function Debts() {
 
                                 {debt.creditor && (
                                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                                        债权人: {debt.creditor}
+                                        {t('debts.creditor')}: {debt.creditor}
                                     </p>
                                 )}
 
@@ -292,16 +294,16 @@ export default function Debts() {
 
                                     <div className="flex justify-between items-center text-xs">
                                         <span className={`font-medium ${debtService.calculateProgress(debt) >= 50 ? 'text-green-500' : 'text-orange-500'}`}>
-                                            {debtService.calculateProgress(debt)}% 已还
+                                            {debtService.calculateProgress(debt)}% {t('debts.paidPercentage')}
                                         </span>
                                         <span className={debtService.isDueSoon(debt.dueDate) ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}>
-                                            {debtService.isOverdue(debt.dueDate) ? '已逾期' : `${debtService.getDaysUntilDue(debt.dueDate)} 天后到期`}
+                                            {debtService.isOverdue(debt.dueDate) ? t('debts.overdue') : `${debtService.getDaysUntilDue(debt.dueDate)} ${t('debts.daysUntilDue')}`}
                                         </span>
                                     </div>
 
                                     <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-200/30 dark:border-gray-700/30">
-                                        <span>利率: {debt.interestRate}%/{debt.interestType === 'fixed' ? '固定' : '浮动'}</span>
-                                        <span>月供: ¥{debt.minimumPayment.toLocaleString()}</span>
+                                        <span>{t('debts.interestRate')}: {debt.interestRate}%/{debt.interestType === 'fixed' ? t('debts.fixed') : t('debts.variable')}</span>
+                                        <span>{t('debts.minimumPayment')}: ¥{debt.minimumPayment.toLocaleString()}</span>
                                     </div>
                                 </div>
 
@@ -325,7 +327,7 @@ export default function Debts() {
             <Modal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
-                title="添加债务"
+                title={t('debts.add')}
             >
                 <DebtForm
                     onSuccess={() => setShowAddModal(false)}
@@ -339,7 +341,7 @@ export default function Debts() {
                     setShowEditModal(false);
                     setEditingDebt(null);
                 }}
-                title="编辑债务"
+                title={t('debts.edit')}
             >
                 {editingDebt && (
                     <DebtForm
@@ -362,7 +364,7 @@ export default function Debts() {
                     setShowPaymentModal(false);
                     setPayingDebt(null);
                 }}
-                title="还款"
+                title={t('debts.makePayment')}
             >
                 {payingDebt && (
                     <DebtPaymentModal
