@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { useAppState, useAppDispatch, useAccountRepository } from '../contexts';
+import { useTranslation } from '../hooks/useTranslation';
 import { Modal } from '../components/ui/Modal';
 import { AddAccountForm } from '../components/forms/AddAccountForm';
 import { AccountBalanceModal } from '../components/forms/AccountBalanceModal';
@@ -20,6 +21,7 @@ export default function Accounts() {
     const dispatch = useAppDispatch();
     const accountRepo = useAccountRepository();
     const { accounts, accountBalances, theme } = state;
+    const { t } = useTranslation();
 
     const pieChartRef = useRef<HTMLCanvasElement>(null);
     const pieChartInstance = useRef<any>(null);
@@ -79,10 +81,10 @@ export default function Accounts() {
     }, {});
 
     const typeLabels: Record<string, string> = {
-        bank: 'Bank Accounts',
-        cash: 'Cash',
+        bank: t('accounts.bank'),
+        cash: t('accounts.cash'),
         digital: 'Digital Wallets',
-        credit: 'Credit Cards',
+        credit: t('accounts.credit'),
     };
 
     const typeIcons: Record<string, string> = {
@@ -161,30 +163,30 @@ export default function Accounts() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Accounts</h2>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{t('accounts.title')}</h2>
                 <div className="flex gap-3">
                     <button
                         onClick={() => setShowTransferModal(true)}
                         className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                     >
-                        💸 Transfer
+                        💸 {t('accounts.transfer')}
                     </button>
                     <button
                         onClick={() => setShowAddModal(true)}
                         className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                     >
-                        + Add Account
+                        + {t('accounts.add')}
                     </button>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Accounts</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('accounts.title')}</div>
                     <div className="text-2xl font-bold text-gray-800 dark:text-white group-hover:scale-105 transition-transform">{stats.total}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Active</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('common.yes')}</div>
                     <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">{stats.active}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
@@ -192,7 +194,7 @@ export default function Accounts() {
                     <div className="text-2xl font-bold text-gray-400 group-hover:scale-105 transition-transform">{stats.inactive}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Balance</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('accounts.balance')}</div>
                     <div className="text-2xl font-bold text-blue-500 group-hover:scale-105 transition-transform">¥{stats.totalBalance.toLocaleString()}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
@@ -205,7 +207,7 @@ export default function Accounts() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Account Balances</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">{t('accounts.balance')}</h3>
                     <div className="h-64">
                         <canvas ref={pieChartRef} />
                     </div>
@@ -235,27 +237,27 @@ export default function Accounts() {
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5">
                 <div className="flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-64">
-                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Search</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t('common.search')}</label>
                         <input
                             type="text"
-                            placeholder="Search account name..."
+                            placeholder={t('common.search')}
                             value={searchText}
                             onChange={e => setSearchText(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Type</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t('accounts.accountType')}</label>
                         <select
                             value={filterType}
                             onChange={e => setFilterType(e.target.value as FilterType)}
                             className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         >
-                            <option value="all">All Types</option>
-                            <option value="bank">Bank</option>
-                            <option value="cash">Cash</option>
+                            <option value="all">{t('accounts.accountType')}</option>
+                            <option value="bank">{t('accounts.bank')}</option>
+                            <option value="cash">{t('accounts.cash')}</option>
                             <option value="digital">Digital</option>
-                            <option value="credit">Credit</option>
+                            <option value="credit">{t('accounts.credit')}</option>
                         </select>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -272,7 +274,7 @@ export default function Accounts() {
                             onClick={clearFilters}
                             className="px-4 py-2 text-red-500 hover:bg-red-50/50 dark:hover:bg-red-900/20 rounded-xl border border-red-200/50 dark:border-red-700/50 transition-all"
                         >
-                            Clear Filters
+                            {t('transactions.clearFilter')}
                         </button>
                     )}
                 </div>
@@ -280,7 +282,7 @@ export default function Accounts() {
 
             {Object.keys(groupedAccounts).length === 0 ? (
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-12 text-center text-gray-500 dark:text-gray-400">
-                    {hasActiveFilters ? 'No accounts match your filters' : 'No accounts yet'}
+                    {hasActiveFilters ? 'No accounts match your filters' : t('accounts.noAccounts')}
                 </div>
             ) : (
                 Object.entries(groupedAccounts).map(([type, typeAccounts]) => (
@@ -314,7 +316,7 @@ export default function Accounts() {
                                                 }}
                                                 className="px-3 py-1 text-sm bg-green-100/50 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200/50 dark:hover:bg-green-800/40 rounded-lg transition-colors"
                                             >
-                                                Balance
+                                                {t('accounts.balance')}
                                             </button>
                                             <button
                                                 onClick={() => {
@@ -353,7 +355,7 @@ export default function Accounts() {
             <Modal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
-                title="Add Account"
+                title={t('accounts.add')}
             >
                 <AddAccountForm onSuccess={() => setShowAddModal(false)} onCancel={() => setShowAddModal(false)} />
             </Modal>
@@ -364,7 +366,7 @@ export default function Accounts() {
                     setShowEditModal(false);
                     setEditingAccount(null);
                 }}
-                title="Edit Account"
+                title={t('accounts.edit')}
             >
                 {editingAccount && (
                     <AddAccountForm
@@ -387,7 +389,7 @@ export default function Accounts() {
                     setShowBalanceModal(false);
                     setBalanceAccount(null);
                 }}
-                title="Manage Balances"
+                title={t('accounts.balance')}
             >
                 {balanceAccount && (
                     <AccountBalanceModal
@@ -408,7 +410,7 @@ export default function Accounts() {
             <Modal
                 isOpen={showTransferModal}
                 onClose={() => setShowTransferModal(false)}
-                title="Transfer"
+                title={t('accounts.transfer')}
             >
                 <TransferModal
                     accounts={accounts}

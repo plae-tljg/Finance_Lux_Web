@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAppState, useAppDispatch, useGoalRepository } from '../contexts';
+import { useTranslation } from '../hooks/useTranslation';
 import { Modal } from '../components/ui/Modal';
 import { GoalForm } from '../components/goals/GoalForm';
 import { goalService } from '../services/goal/GoalService';
@@ -10,6 +11,7 @@ export default function Goals() {
     const dispatch = useAppDispatch();
     const goalRepo = useGoalRepository();
     const { goals } = state;
+    const { t } = useTranslation();
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
@@ -66,22 +68,22 @@ export default function Goals() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    财务目标
+                    {t('goals.title')}
                 </h2>
                 <button
                     onClick={() => setShowAddModal(true)}
                     className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                 >
-                    + 创建目标
+                    + {t('goals.add')}
                 </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {[
-                    { label: '进行中', value: goals.filter(g => g.status === 'active').length, color: 'purple' },
-                    { label: '已完成', value: goals.filter(g => g.status === 'completed').length, color: 'green' },
-                    { label: '总目标', value: `¥${goals.filter(g => g.status === 'active').reduce((sum, g) => sum + g.targetAmount, 0).toLocaleString()}`, color: 'blue' },
-                    { label: '已存', value: `¥${goals.filter(g => g.status === 'active').reduce((sum, g) => sum + g.currentAmount, 0).toLocaleString()}`, color: 'emerald' },
+                    { label: t('goals.active'), value: goals.filter(g => g.status === 'active').length, color: 'purple' },
+                    { label: t('goals.completed'), value: goals.filter(g => g.status === 'completed').length, color: 'green' },
+                    { label: t('goals.totalTarget'), value: `¥${goals.filter(g => g.status === 'active').reduce((sum, g) => sum + g.targetAmount, 0).toLocaleString()}`, color: 'blue' },
+                    { label: t('goals.saved'), value: `¥${goals.filter(g => g.status === 'active').reduce((sum, g) => sum + g.currentAmount, 0).toLocaleString()}`, color: 'emerald' },
                 ].map((stat, i) => {
                     const colorClasses = {
                         purple: 'text-purple-500',
@@ -101,13 +103,13 @@ export default function Goals() {
             {goals.length === 0 ? (
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-12 text-center">
                     <div className="text-6xl mb-4">🎯</div>
-                    <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">还没有财务目标</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">创建你的第一个财务目标，开始存钱之旅！</p>
+                    <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">{t('goals.createFirst')}</h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">{t('goals.startSaving')}</p>
                     <button
                         onClick={() => setShowAddModal(true)}
                         className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 shadow-lg shadow-purple-500/30 transition-all"
                     >
-                        + 创建第一个目标
+                        + {t('goals.createFirst')}
                     </button>
                 </div>
             ) : (
@@ -119,7 +121,7 @@ export default function Goals() {
                         >
                             {goal.status === 'completed' && (
                                 <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-center py-1 text-sm font-medium z-10">
-                                    ✨ 已完成
+                                    ✨ {t('goals.completed')}
                                 </div>
                             )}
 
@@ -137,12 +139,12 @@ export default function Goals() {
                                                 {goal.name}
                                             </h3>
                                             <span className="text-xs text-gray-500 dark:text-gray-400">
-                                                {goal.category === 'savings' ? '💰 储蓄' :
-                                                 goal.category === 'investment' ? '📈 投资' :
-                                                 goal.category === 'debt' ? '💳 债务' :
-                                                 goal.category === 'purchase' ? '🛒 购物' :
-                                                 goal.category === 'emergency' ? '🛡️ 应急' :
-                                                 goal.category === 'retirement' ? '🏖️ 退休' : '📦 其他'}
+                                                {goal.category === 'savings' ? `${t('goals.savings')} 💰` :
+                                                 goal.category === 'investment' ? `${t('goals.investment')} 📈` :
+                                                 goal.category === 'debt' ? `${t('goals.debt')} 💳` :
+                                                 goal.category === 'purchase' ? `${t('goals.purchase')} 🛒` :
+                                                 goal.category === 'emergency' ? `${t('goals.emergency')} 🛡️` :
+                                                 goal.category === 'retirement' ? `${t('goals.retirement')} 🏖️` : `${t('goals.other')} 📦`}
                                             </span>
                                         </div>
                                     </div>
@@ -170,7 +172,7 @@ export default function Goals() {
                                     </div>
                                 </div>
 
-                                {goal.description && (
+{goal.description && (
                                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
                                         {goal.description}
                                     </p>
@@ -198,10 +200,10 @@ export default function Goals() {
 
                                     <div className="flex justify-between items-center text-xs">
                                         <span className={`font-medium ${goalService.isOnTrack(goal) ? 'text-green-500' : 'text-orange-500'}`}>
-                                            {goalService.calculateProgress(goal)}% 完成
+                                            {goalService.calculateProgress(goal)}% {t('goals.progress')}
                                         </span>
                                         <span className={`${goalService.getDaysRemaining(goal) <= 7 ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>
-                                            {goalService.getDaysRemaining(goal) === 0 ? '已到期' : `${goalService.getDaysRemaining(goal)} 天后到期`}
+                                            {goalService.getDaysRemaining(goal) === 0 ? t('goals.overdue') : `${goalService.getDaysRemaining(goal)} ${goalService.getDaysRemaining(goal) > 0 ? t('goals.daysRemaining') : t('goals.daysOverdueText')}`}
                                         </span>
                                     </div>
                                 </div>
@@ -228,7 +230,7 @@ export default function Goals() {
             <Modal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
-                title="创建财务目标"
+                title={t('goals.add')}
             >
                 <GoalForm
                     onSuccess={() => setShowAddModal(false)}
@@ -242,7 +244,7 @@ export default function Goals() {
                     setShowEditModal(false);
                     setEditingGoal(null);
                 }}
-                title="编辑目标"
+                title={t('goals.edit')}
             >
                 {editingGoal && (
                     <GoalForm

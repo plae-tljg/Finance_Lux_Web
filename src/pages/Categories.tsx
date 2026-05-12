@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useAppState, useAppDispatch } from '../contexts/AppStateContext';
 import { useCategoryRepository } from '../contexts';
+import { useTranslation } from '../hooks/useTranslation';
 import { Modal } from '../components/ui/Modal';
 import { AddCategoryForm } from '../components/forms/AddCategoryForm';
 import type { Category } from '../services/database/schemas/Category';
@@ -14,6 +15,7 @@ export default function Categories() {
     const dispatch = useAppDispatch();
     const categoryRepo = useCategoryRepository();
     const { categories } = state;
+    const { t } = useTranslation();
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
@@ -115,26 +117,26 @@ export default function Categories() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Categories</h2>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">{t('categories.title')}</h2>
                 <button
                     onClick={() => setShowAddModal(true)}
                     className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
                 >
-                    + Add Category
+                    + {t('categories.add')}
                 </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Total</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('common.sort')}</div>
                     <div className="text-2xl font-bold text-gray-800 dark:text-white group-hover:scale-105 transition-transform">{stats.total}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Income</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('categories.income')}</div>
                     <div className="text-2xl font-bold text-green-500 group-hover:scale-105 transition-transform">{stats.income}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
-                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Expense</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">{t('categories.expense')}</div>
                     <div className="text-2xl font-bold text-red-500 group-hover:scale-105 transition-transform">{stats.expense}</div>
                 </div>
                 <div className="group bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500">
@@ -146,25 +148,25 @@ export default function Categories() {
             <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-5">
                 <div className="flex flex-wrap gap-4 items-end">
                     <div className="flex-1 min-w-64">
-                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Search</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t('common.search')}</label>
                         <input
                             type="text"
-                            placeholder="Search category name..."
+                            placeholder={t('common.search')}
                             value={searchText}
                             onChange={e => setSearchText(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Type</label>
+                        <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">{t('categories.type')}</label>
                         <select
                             value={filterType}
                             onChange={e => setFilterType(e.target.value as FilterType)}
                             className="px-4 py-2 border border-gray-300/50 dark:border-gray-600/50 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
                         >
-                            <option value="all">All Types</option>
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
+                            <option value="all">{t('categories.type')}</option>
+                            <option value="income">{t('categories.income')}</option>
+                            <option value="expense">{t('categories.expense')}</option>
                         </select>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
@@ -181,7 +183,7 @@ export default function Categories() {
                             onClick={clearFilters}
                             className="px-4 py-2 text-red-500 hover:bg-red-50/50 dark:hover:bg-red-900/20 rounded-xl border border-red-200/50 dark:border-red-700/50 transition-all"
                         >
-                            Clear Filters
+                            {t('transactions.clearFilter')}
                         </button>
                     )}
                 </div>
@@ -192,7 +194,7 @@ export default function Categories() {
                     <div className="px-6 py-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-900/20 dark:to-emerald-900/20 border-b border-gray-200/30 dark:border-gray-700/30 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <span className="text-xl">💰</span>
-                            <h3 className="font-semibold text-gray-700 dark:text-gray-200">Income Categories</h3>
+                            <h3 className="font-semibold text-gray-700 dark:text-gray-200">{t('categories.income')} {t('categories.title')}</h3>
                             <span className="text-sm text-gray-500 dark:text-gray-400">({incomeCategories.length})</span>
                         </div>
                         <button
@@ -204,7 +206,7 @@ export default function Categories() {
                     </div>
                     <div className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
                         {incomeCategories.length === 0 ? (
-                            <div className="p-8 text-center text-gray-500 dark:text-gray-400">No income categories</div>
+                            <div className="p-8 text-center text-gray-500 dark:text-gray-400">{t('categories.noCategories')}</div>
                         ) : (
                             incomeCategories.map((category: Category) => (
                                 <div key={category.id} className={`px-6 py-4 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors group ${!category.isActive ? 'opacity-50' : ''}`}>
@@ -252,7 +254,7 @@ export default function Categories() {
                     <div className="px-6 py-4 bg-gradient-to-r from-red-500/10 to-pink-500/10 dark:from-red-900/20 dark:to-pink-900/20 border-b border-gray-200/30 dark:border-gray-700/30 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <span className="text-xl">💸</span>
-                            <h3 className="font-semibold text-gray-700 dark:text-gray-200">Expense Categories</h3>
+                            <h3 className="font-semibold text-gray-700 dark:text-gray-200">{t('categories.expense')} {t('categories.title')}</h3>
                             <span className="text-sm text-gray-500 dark:text-gray-400">({expenseCategories.length})</span>
                         </div>
                         <button
@@ -264,7 +266,7 @@ export default function Categories() {
                     </div>
                     <div className="divide-y divide-gray-200/30 dark:divide-gray-700/30">
                         {expenseCategories.length === 0 ? (
-                            <div className="p-8 text-center text-gray-500 dark:text-gray-400">No expense categories</div>
+                            <div className="p-8 text-center text-gray-500 dark:text-gray-400">{t('categories.noCategories')}</div>
                         ) : (
                             expenseCategories.map((category: Category) => (
                                 <div key={category.id} className={`px-6 py-4 hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors group ${!category.isActive ? 'opacity-50' : ''}`}>
@@ -312,7 +314,7 @@ export default function Categories() {
             <Modal
                 isOpen={showAddModal}
                 onClose={() => setShowAddModal(false)}
-                title="Add Category"
+                title={t('categories.add')}
             >
                 <AddCategoryForm onSuccess={() => setShowAddModal(false)} onCancel={() => setShowAddModal(false)} />
             </Modal>
@@ -323,7 +325,7 @@ export default function Categories() {
                     setShowEditModal(false);
                     setEditingCategory(null);
                 }}
-                title="Edit Category"
+                title={t('categories.edit')}
             >
                 {editingCategory && (
                     <AddCategoryForm
@@ -343,7 +345,7 @@ export default function Categories() {
             <Modal
                 isOpen={deleteConfirm !== null}
                 onClose={() => setDeleteConfirm(null)}
-                title="Delete Category"
+                title={t('categories.delete')}
             >
                 <div className="space-y-4">
                     <p className="text-gray-600 dark:text-gray-300">Are you sure you want to delete this category?</p>
@@ -352,13 +354,13 @@ export default function Categories() {
                             onClick={() => deleteConfirm && handleDelete(deleteConfirm)}
                             className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 shadow-lg shadow-red-500/30 transition-all"
                         >
-                            Delete
+                            {t('common.delete')}
                         </button>
                         <button
                             onClick={() => setDeleteConfirm(null)}
                             className="px-4 py-2 bg-gray-200/50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-300/50 dark:hover:bg-gray-600 transition-all"
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </button>
                     </div>
                 </div>

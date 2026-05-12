@@ -134,7 +134,17 @@ export const zh: typeof en = {
     emergency: '应急资金',
     retirement: '退休',
     other: '其他',
-    noGoals: '暂无目标'
+    noGoals: '暂无目标',
+    active: '进行中',
+    totalTarget: '总目标',
+    saved: '已存',
+    createFirst: '创建你的第一个目标',
+    startSaving: '创建你的第一个财务目标，开始存钱之旅！',
+    noDescription: '暂无描述',
+    daysRemaining: '天后到期',
+    daysOverdueText: '天已逾期',
+    overdue: '已到期',
+    contribute: '存入资金'
   },
   calendar: {
     title: '日历视图',

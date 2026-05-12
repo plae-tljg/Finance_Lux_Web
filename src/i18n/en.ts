@@ -132,7 +132,17 @@ export const en = {
     emergency: 'Emergency',
     retirement: 'Retirement',
     other: 'Other',
-    noGoals: 'No goals created'
+    noGoals: 'No goals created',
+    active: 'Active',
+    totalTarget: 'Total Target',
+    saved: 'Saved',
+    createFirst: 'Create your first goal',
+    startSaving: 'Create your first financial goal and start your saving journey!',
+    noDescription: 'No description',
+    daysRemaining: 'days remaining',
+    daysOverdueText: 'days overdue',
+    overdue: 'Overdue',
+    contribute: 'Contribute Funds'
   },
   calendar: {
     title: 'Calendar',
